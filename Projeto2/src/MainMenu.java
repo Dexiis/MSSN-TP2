@@ -6,13 +6,11 @@ import Simulations.*;
 public class MainMenu extends PApplet {
 
 	private String title = "Chose what to open:";
-	private String option1 = "Free Fall Without Friction";
-	private String option2 = "Free Fall With Friction";
-	private String option3 = "Solar System Simulation";
-	private String option4 = "Individual Behaviours between identities";
-	private String option5 = "Flocking";
-	private String option6 = "Normandy War Simulation";
-	private String option7 = "Space War Simulation";
+	private String option1 = "Solar System Simulation";
+	private String option2 = "Individual Behaviours between identities";
+	private String option3 = "Flocking";
+	private String option4 = "Normandy War Simulation";
+	private String option5 = "Space War Simulation";
 
 	public void settings() {
 		size(650, 360);
@@ -35,8 +33,6 @@ public class MainMenu extends PApplet {
 		drawButton(width / 2, 200, 300, 40, option3, 3);
 		drawButton(width / 2, 260, 300, 40, option4, 4);
 		drawButton(width / 2, 320, 300, 40, option5, 5);
-		drawButton(width / 2, 380, 300, 40, option6, 5);
-		drawButton(width / 2, 440, 300, 40, option7, 5);
 	}
 
 	void drawButton(float x, float y, float w, float h, String label, int id) {
@@ -56,32 +52,24 @@ public class MainMenu extends PApplet {
 		float w = 300;
 		float h = 40;
 
-		float y1 = 80;
+		float y1 = 200;
 		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y1 - h / 2 && mouseY < y1 + h / 2)
-			PApplet.main(FreeFallWoF.class);
-
-		float y2 = 140;
-		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y2 - h / 2 && mouseY < y2 + h / 2)
-			PApplet.main(FreeFallWF.class);
-
-		float y3 = 200;
-		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y3 - h / 2 && mouseY < y3 + h / 2)
 			PApplet.main(SolarSystem.class);
 
-		float y4 = 260;
-		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y4 - h / 2 && mouseY < y4 + h / 2)
+		float y2 = 260;
+		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y2 - h / 2 && mouseY < y2 + h / 2)
 			PApplet.main(IndividualBehaviour.class);
 
-		float y5 = 320;
-		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y5 - h / 2 && mouseY < y5 + h / 2)
+		float y3 = 320;
+		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y3 - h / 2 && mouseY < y3 + h / 2)
 			PApplet.main(Flocking.class);
 		
-		float y6 = 380;
-		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y6 - h / 2 && mouseY < y6 + h / 2)
+		float y4 = 380;
+		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y4 - h / 2 && mouseY < y4 + h / 2)
 			PApplet.main(NormandyWar.class);
 		
-		float y7 = 440;
-		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y7 - h / 2 && mouseY < y7 + h / 2)
+		float y5 = 440;
+		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y5 - h / 2 && mouseY < y5 + h / 2)
 			PApplet.main(SpaceWar.class);
 	}
 
