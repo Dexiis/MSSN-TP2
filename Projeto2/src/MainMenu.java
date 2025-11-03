@@ -12,7 +12,7 @@ public class MainMenu extends PApplet {
 	private String option5 = "Space War Simulation";
 	
 	public void settings() {
-		size(650, 360);
+		size(360, 360);
 	}
 
 	public void setup() {

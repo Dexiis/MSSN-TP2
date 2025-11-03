@@ -68,7 +68,7 @@ public class SolarSystem extends PApplet {
 		fill(255);
 		String speedText = "Velocity: " + speed + " times the normal speed";
 		text(speedText, 10, 10);
-		text("Controls: [W] Speed Up, [S] Slow Down", 10, 30);
+		text("Controls: [↑] Speed Up, [↓] Slow Down", 10, 30);
 		text("Controls: [C] 1m/s, [V] 1D/s, [B] 1M/s, [N] 1Y/s", 10, 50);
 		text("[M] 10Y/s (Not Recommended)", 10, 70);
 	}
@@ -126,7 +126,7 @@ public class SolarSystem extends PApplet {
 	}
 
 	public void keyPressed() {
-		float speedIncrement = 5000;
+		float speedIncrement = 1400*7;
 
 		if (key == CODED) {
 			if (keyCode == UP) {
