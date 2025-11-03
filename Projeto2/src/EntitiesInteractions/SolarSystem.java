@@ -16,17 +16,17 @@ public class SolarSystem extends PApplet {
 
 	private final float AU_TO_PIXELS = 15f;
 
-	private final float PLANET_RADIUS_SCALE = 0.0000002f;
-	private final float SUN_RADIUS_SCALE = 0.00000002f; // x10 menor que os planetas
+	private final float PLANET_RADIUS_SCALE = 0.0000005f;
+	private final float SUN_RADIUS_SCALE = 0.00000005f; // x10 menor que os planetas
 	private final float ORBIT_SPACING_PIXELS = 50.0f; // Isto serve para todos os planetas estarem à mesma distância
 														// VISUALMENTE
 
-	private float speed = 80001; // segundos * minutos * horas = 1 dia por calculo
+	private float speed = 1;
 
 	private PVector center;
 
 	public void settings() {
-		size(850, 850);
+		size(1550, 850);
 	}
 
 	public void setup() {
@@ -69,6 +69,8 @@ public class SolarSystem extends PApplet {
 		String speedText = "Velocity: " + speed + " times the normal speed";
 		text(speedText, 10, 10);
 		text("Controls: [W] Speed Up, [S] Slow Down", 10, 30);
+		text("Controls: [C] 1m/s, [V] 1D/s, [B] 1M/s, [N] 1Y/s", 10, 50);
+		text("[M] 10Y/s (Not Recommended)", 10, 70);
 	}
 
 	private void initializeSolarSystem() {
@@ -76,13 +78,15 @@ public class SolarSystem extends PApplet {
 		float currentVisualPosition = 0;
 
 		Body sun = new Body(new PVector(0, 0), new PVector(0, 0), SUN_MASS, (float) (6.957e8 * SUN_RADIUS_SCALE),
-				color(255, 180, 0), 1.0f, 4.0f);
+				color(255, 180, 0), 1.0f, 8.0f);
 		bodies.add(sun);
 		currentVisualPosition += ORBIT_SPACING_PIXELS;
 
 		addPlanet(3.30e23f, 2.44e6f, 0.387f * EARTH_DIST_AU, 4.79e4f, color(150, 150, 150), currentVisualPosition,
 				0.3f);
 		currentVisualPosition += ORBIT_SPACING_PIXELS;
+		
+		// 0.387f * EARTH_DIST_AU / AU_TO_PIXELS <-- Distancia real
 
 		addPlanet(4.87e24f, 6.05e6f, 0.723f * EARTH_DIST_AU, 3.50e4f, color(220, 150, 50), currentVisualPosition, 1f);
 		currentVisualPosition += ORBIT_SPACING_PIXELS;
@@ -131,9 +135,20 @@ public class SolarSystem extends PApplet {
 				speed -= speedIncrement;
 			}
 		}
-
-		if (key == ' ') {
+		if (key == 'c') {
 			speed = 1;
+		}
+		if (key == 'v') {
+			speed = 1400;
+		}
+		if (key == 'b') {
+			speed = 42500;
+		}
+		if (key == 'n') {
+			speed = 520000;
+		}
+		if (key == 'm') {
+			speed = 5200000;
 		}
 	}
 }
