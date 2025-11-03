@@ -1,5 +1,4 @@
 import processing.core.PApplet;
-import BasicPhysics.*;
 import EntitiesInteractions.*;
 import Simulations.*;
 
@@ -11,7 +10,7 @@ public class MainMenu extends PApplet {
 	private String option3 = "Flocking";
 	private String option4 = "Normandy War Simulation";
 	private String option5 = "Space War Simulation";
-
+	
 	public void settings() {
 		size(650, 360);
 	}
@@ -52,28 +51,25 @@ public class MainMenu extends PApplet {
 		float w = 300;
 		float h = 40;
 
-		float y1 = 80;
-		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y1 - h / 2 && mouseY < y1 + h / 2)
+		if (checkButton(80, x, w, h)) {
 			PApplet.main(SolarSystem.class);
-
-		float y2 = 140;
-		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y2 - h / 2 && mouseY < y2 + h / 2)
+		} else if (checkButton(140, x, w, h)) {
 			PApplet.main(IndividualBehaviour.class);
-
-		float y3 = 200;
-		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y3 - h / 2 && mouseY < y3 + h / 2)
+		} else if (checkButton(200, x, w, h)) {
 			PApplet.main(Flocking.class);
-		
-		float y4 = 260;
-		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y4 - h / 2 && mouseY < y4 + h / 2)
+		} else if (checkButton(260, x, w, h)) {
 			PApplet.main(NormandyWar.class);
-		
-		float y5 = 320;
-		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y5 - h / 2 && mouseY < y5 + h / 2)
+		} else if (checkButton(320, x, w, h)) {
 			PApplet.main(SpaceWar.class);
+		}
 	}
+	
+	private boolean checkButton(float buttonY, float x, float w, float h) {
+        return mouseX > x - w / 2 && mouseX < x + w / 2 && 
+               mouseY > buttonY - h / 2 && mouseY < buttonY + h / 2;
+    }
 
 	public static void main(String[] args) {
-		PApplet.main(MainMenu.class);
+		PApplet.main(MainMenu.class.getName());
 	}
 }

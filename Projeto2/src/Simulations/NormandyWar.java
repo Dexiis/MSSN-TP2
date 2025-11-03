@@ -1,5 +1,7 @@
 package Simulations;
 
-public class NormandyWar {
-	
+import processing.core.PApplet;
+
+public class NormandyWar extends PApplet{
+
 }

@@ -1,5 +1,7 @@
 package EntitiesInteractions;
 
-public class IndividualBehaviour {
+import processing.core.PApplet;
+
+public class IndividualBehaviour extends PApplet {
 
 }

@@ -3,40 +3,47 @@ import processing.core.PVector;
 
 public abstract class Mover {
 
-    protected PVector pos;
-    protected PVector vel;
-    protected PVector acc;
+    protected PVector position;
+    protected PVector velocity;
+    protected PVector acceleration;
     protected float mass;
     private static final double G = 6.67e-11;
 
-    protected Mover(PVector pos, PVector vel, float mass) {
-        this.pos = pos.copy();
-        this.vel = vel;
-        acc = new PVector();
+    protected Mover(PVector position, PVector velocity, float mass) {
+        this.position = position.copy();
+        this.velocity = velocity;
+        acceleration = new PVector();
         this.mass = mass;
     }
 
-    public void applyForce(PVector force) { acc.add(PVector.div(force, mass)); }
+    public void applyForce(PVector force) { acceleration.add(PVector.div(force, mass)); }
 
-    public void move(float dt) {
-        vel.add(acc.mult(dt));
-        pos.add(PVector.mult(vel, dt));
-        acc.mult(0);
+    public void move(float speedUp) {
+        velocity.add(acceleration.mult(speedUp));
+        position.add(PVector.mult(velocity, speedUp));
+        acceleration.mult(0);
     }
 
-    public PVector attraction(Mover m) {
-        PVector r = PVector.sub(this.pos, m.pos);
-        float dist = r.mag();
-        float strength = (float) (G * this.mass * m.mass / Math.pow(dist, 2));
-        return r.normalize().mult(strength);
+    public PVector attraction(Mover body) {
+        PVector direction = PVector.sub(this.position, body.position); 
+        float distance = direction.mag();
+        
+        float minDistance = 1e6f; 
+        if (distance < minDistance) {
+            distance = minDistance; 
+        }
+        
+        float strength = (float) (G * this.mass * body.mass / Math.pow(distance, 2));
+        
+        return direction.normalize().mult(strength);
     }
 
-    public PVector getPos() { return pos; }
-    public PVector getVel() { return vel; }
-    public PVector getAcc() { return acc; }
+    public PVector getPosition() { return position; }
+    public PVector getVelocity() { return velocity; }
+    public PVector getAcceleration() { return acceleration; }
 
-    public void setAcc(PVector acc) {this.acc = acc;}
-    public void setVel(PVector vel) {this.vel = vel;}
-    public void setPos(PVector pos) {this.pos = pos;}
+    public void setAcceleration(PVector acceleration) {this.acceleration = acceleration;}
+    public void setVelocity(PVector velocity) {this.velocity = velocity;}
+    public void setPosition(PVector position) {this.position = position;}
 
 }
