@@ -122,7 +122,7 @@ public class SolarSystem extends PApplet {
 	}
 
 	public void keyPressed() {
-		float speedIncrement = 1000;
+		float speedIncrement = 5000;
 
 		if (key == CODED) {
 			if (keyCode == UP) {
@@ -133,7 +133,7 @@ public class SolarSystem extends PApplet {
 		}
 
 		if (key == ' ') {
-			speed = 0;
+			speed = 1;
 		}
 	}
 }
