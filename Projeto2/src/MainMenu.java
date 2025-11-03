@@ -52,23 +52,23 @@ public class MainMenu extends PApplet {
 		float w = 300;
 		float h = 40;
 
-		float y1 = 200;
+		float y1 = 80;
 		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y1 - h / 2 && mouseY < y1 + h / 2)
 			PApplet.main(SolarSystem.class);
 
-		float y2 = 260;
+		float y2 = 140;
 		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y2 - h / 2 && mouseY < y2 + h / 2)
 			PApplet.main(IndividualBehaviour.class);
 
-		float y3 = 320;
+		float y3 = 200;
 		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y3 - h / 2 && mouseY < y3 + h / 2)
 			PApplet.main(Flocking.class);
 		
-		float y4 = 380;
+		float y4 = 260;
 		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y4 - h / 2 && mouseY < y4 + h / 2)
 			PApplet.main(NormandyWar.class);
 		
-		float y5 = 440;
+		float y5 = 320;
 		if (mouseX > x - w / 2 && mouseX < x + w / 2 && mouseY > y5 - h / 2 && mouseY < y5 + h / 2)
 			PApplet.main(SpaceWar.class);
 	}
