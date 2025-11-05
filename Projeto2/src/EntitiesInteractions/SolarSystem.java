@@ -4,34 +4,46 @@ import processing.core.PApplet;
 import processing.core.PVector;
 
 import java.util.ArrayList;
-
-import Physics.Body;
+import Physics.*;
 
 public class SolarSystem extends PApplet {
 
 	private ArrayList<Body> bodies;
 
-	private final float SUN_MASS = 1.989e30f;
-	private final float EARTH_DIST_AU = 1.496e11f;
+	private static final float EARTH_DISTANCE = 1.496e11f;
 
-	private final float AU_TO_PIXELS = 15f;
+	private static final float PLANET_RADIUS_SCALE = 0.000005f;
+	private static final float SUN_RADIUS_SCALE = 0.0000005f;
 
-	private final float PLANET_RADIUS_SCALE = 0.0000005f;
-	private final float SUN_RADIUS_SCALE = 0.00000005f; // x10 menor que os planetas
-	private final float ORBIT_SPACING_PIXELS = 50.0f; // Isto serve para todos os planetas estarem à mesma distância
-														// VISUALMENTE
+	static final String[] NAMES = { "Sun", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus",
+			"Neptune" };
 
+	static final float[] DISTANCES = { 0.0f, 0.387f * EARTH_DISTANCE, 0.723f * EARTH_DISTANCE, 1.00f * EARTH_DISTANCE,
+			1.524f * EARTH_DISTANCE, 5.20f * EARTH_DISTANCE, 9.58f * EARTH_DISTANCE, 19.2f * EARTH_DISTANCE,
+			30.1f * EARTH_DISTANCE };
+
+	static final float[] SPEEDS = { 0.0f, 4.79e4f, 3.50e4f, 2.98e4f, 2.41e4f, 1.31e4f, 9.69e3f, 6.81e3f, 5.43e3f };
+
+	static final float[] RADII = { 6.96e8f, 2.44e6f, 6.05e6f, 6.37e6f, 3.39e6f, 6.99e7f, 5.82e7f, 2.54e7f, 2.46e7f };
+
+	static final float[] MASSES = { 1.989e30f, 3.30e23f, 4.87e24f, 5.97e24f, 6.42e23f, 1.90e27f, 5.68e26f, 8.68e25f,
+			1.02e26f };
+
+	private float[] viewport = { 0f, 0f, 1f, 1f };
+	private double[] window = { -1.2 * 1.496e11f * 5, 1.2 * 1.496e11f * 5, -1.2 * 1.496e11f * 5, 1.2 * 1.496e11f * 5 };
 	private float speed = 1;
+	private int lastUpdateTime;
 
-	private PVector center;
+	private SubPlot plt;
 
 	public void settings() {
-		size(1550, 850);
+		size(1600, 900);
 	}
 
 	public void setup() {
+		lastUpdateTime = millis();
+		plt = new SubPlot(window, viewport, width, height);
 		bodies = new ArrayList<>();
-		center = new PVector(width / 2.0f, height / 2.0f);
 		initializeSolarSystem();
 		background(0);
 
@@ -41,8 +53,14 @@ public class SolarSystem extends PApplet {
 	}
 
 	public void draw() {
+		int now = millis();
+		float dt = (now - lastUpdateTime) / 1000f;
+		lastUpdateTime = now;
+
 		fill(0, 0, 0, 75);
 		rect(0, 0, width, height);
+		float[] pp = plt.getBoundingBox();
+		rect(pp[0], pp[1], pp[2], pp[3]);
 
 		for (Body body1 : bodies) {
 			body1.setAcceleration(new PVector(0, 0));
@@ -56,77 +74,51 @@ public class SolarSystem extends PApplet {
 		}
 
 		for (Body body : bodies) {
-			body.move(speed);
-
-			PVector physicalPosition = body.getPosition();
-			float scaleRatio = AU_TO_PIXELS / EARTH_DIST_AU * body.getDisplayScaleFactor();
-			PVector screenPosition = PVector.add(center, PVector.mult(physicalPosition, scaleRatio));
-
-			body.display(this, screenPosition);
+			body.move(speed * dt);
+			body.display(this, plt);
 		}
 
 		fill(255);
 		String speedText = "Velocity: " + speed + " times the normal speed";
 		text(speedText, 10, 10);
 		text("Controls: [↑] Speed Up, [↓] Slow Down", 10, 30);
-		text("Controls: [C] 1m/s, [V] 1D/s, [B] 1M/s, [N] 1Y/s", 10, 50);
-		text("[M] 10Y/s (Not Recommended)", 10, 70);
+		text("Controls: [C] 1s/s, [V] 1D/s, [B] 1M/s, [N] 1Y/s", 10, 50);
 	}
 
 	private void initializeSolarSystem() {
 
-		float currentVisualPosition = 0;
-
-		Body sun = new Body(new PVector(0, 0), new PVector(0, 0), SUN_MASS, (float) (6.957e8 * SUN_RADIUS_SCALE),
-				color(255, 180, 0), 1.0f, 8.0f);
+		Body sun = new Body("Sun", new PVector(0, -DISTANCES[0]), new PVector(SPEEDS[0], 0), MASSES[0],
+				RADII[0] * SUN_RADIUS_SCALE, color(255, 180, 0));
 		bodies.add(sun);
-		currentVisualPosition += ORBIT_SPACING_PIXELS;
 
-		addPlanet(3.30e23f, 2.44e6f, 0.387f * EARTH_DIST_AU, 4.79e4f, color(150, 150, 150), currentVisualPosition,
-				0.3f);
-		currentVisualPosition += ORBIT_SPACING_PIXELS;
-		
-		// 0.387f * EARTH_DIST_AU / AU_TO_PIXELS <-- Distancia real
+		addPlanet("Mercury", DISTANCES[1], SPEEDS[1], MASSES[1], RADII[1], color(150, 150, 150));
 
-		addPlanet(4.87e24f, 6.05e6f, 0.723f * EARTH_DIST_AU, 3.50e4f, color(220, 150, 50), currentVisualPosition, 1f);
-		currentVisualPosition += ORBIT_SPACING_PIXELS;
+		addPlanet("Venus", DISTANCES[2], SPEEDS[2], MASSES[2], RADII[2], color(220, 150, 50));
 
-		addPlanet(5.97e24f, 6.37e6f, 1.00f * EARTH_DIST_AU, 2.98e4f, color(0, 180, 120), currentVisualPosition, 1f);
-		currentVisualPosition += ORBIT_SPACING_PIXELS;
+		addPlanet("Earth", DISTANCES[3], SPEEDS[3], MASSES[3], RADII[3], color(0, 180, 120));
 
-		addPlanet(6.42e23f, 3.39e6f, 1.524f * EARTH_DIST_AU, 2.41e4f, color(200, 50, 0), currentVisualPosition, 0.5f);
-		currentVisualPosition += ORBIT_SPACING_PIXELS;
+		addPlanet("Mars", DISTANCES[4], SPEEDS[4], MASSES[4], RADII[4], color(200, 50, 0));
 
-		addPlanet(1.90e27f, 6.99e7f, 5.20f * EARTH_DIST_AU, 1.31e4f, color(180, 150, 100), currentVisualPosition, 4f);
-		currentVisualPosition += ORBIT_SPACING_PIXELS;
+		addPlanet("Jupiter", DISTANCES[5], SPEEDS[5], MASSES[5], RADII[5], color(180, 150, 100));
 
-		addPlanet(5.68e26f, 5.82e7f, 9.58f * EARTH_DIST_AU, 9.69e3f, color(255, 210, 150), currentVisualPosition, 3f);
-		currentVisualPosition += ORBIT_SPACING_PIXELS;
+		addPlanet("Saturn", DISTANCES[6], SPEEDS[6], MASSES[6], RADII[6], color(255, 210, 150));
 
-		addPlanet(8.68e25f, 2.54e7f, 19.2f * EARTH_DIST_AU, 6.81e3f, color(0, 190, 220), currentVisualPosition, 2f);
-		currentVisualPosition += ORBIT_SPACING_PIXELS;
+		addPlanet("Uranus", DISTANCES[7], SPEEDS[7], MASSES[7], RADII[7], color(0, 190, 220));
 
-		addPlanet(1.02e26f, 2.46e7f, 30.1f * EARTH_DIST_AU, 5.43e3f, color(50, 100, 255), currentVisualPosition, 2f);
+		addPlanet("Neptune", DISTANCES[8], SPEEDS[8], MASSES[8], RADII[8], color(50, 100, 255));
 	}
 
-	private void addPlanet(float mass, float radius, float distance, float speed, int planetColor,
-			float targetVisualDistance, float customRadiusScale) {
+	private void addPlanet(String name, float distance, float speed, float mass, float radius, int planetColor) {
 
 		PVector position = new PVector(0, -distance);
 		PVector velocity = new PVector(speed, 0);
 
-		float distanceInAU = distance / EARTH_DIST_AU;
-		float realVisualDistanceAtScale = distanceInAU * AU_TO_PIXELS;
-
-		float scaleFactor = targetVisualDistance / realVisualDistanceAtScale;
-
-		Body planet = new Body(position, velocity, mass, (float) (radius * PLANET_RADIUS_SCALE), planetColor,
-				scaleFactor, customRadiusScale);
+		Body planet = new Body(name, position, velocity, mass, (float) (radius * PLANET_RADIUS_SCALE), planetColor);
 		bodies.add(planet);
 	}
 
 	public void keyPressed() {
-		float speedIncrement = 1400*7;
+		float speedIncrement = 2629744;
 
 		if (key == CODED) {
 			if (keyCode == UP) {
@@ -139,16 +131,13 @@ public class SolarSystem extends PApplet {
 			speed = 1;
 		}
 		if (key == 'v') {
-			speed = 1400;
+			speed = 86400;
 		}
 		if (key == 'b') {
-			speed = 42500;
+			speed = 2629744;
 		}
 		if (key == 'n') {
-			speed = 520000;
-		}
-		if (key == 'm') {
-			speed = 5200000;
+			speed = 31556926;
 		}
 	}
 }
