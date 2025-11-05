@@ -12,8 +12,11 @@ public class SolarSystem extends PApplet {
 
 	private static final float EARTH_DISTANCE = 1.496e11f;
 
-	private static final float PLANET_RADIUS_SCALE = 0.000005f;
-	private static final float SUN_RADIUS_SCALE = 0.0000005f;
+	//private static final float PLANET_RADIUS_SCALE = 0.000005f;
+	//private static final float SUN_RADIUS_SCALE = 0.0000005f;
+	
+	private static final float PLANET_RADIUS_SCALE = 10;
+	private static final float SUN_RADIUS_SCALE = 10;
 
 	static final String[] NAMES = { "Sun", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus",
 			"Neptune" };
@@ -30,7 +33,7 @@ public class SolarSystem extends PApplet {
 			1.02e26f };
 
 	private float[] viewport = { 0f, 0f, 1f, 1f };
-	private double[] window = { -1.2 * 1.496e11f * 5, 1.2 * 1.496e11f * 5, -1.2 * 1.496e11f * 5, 1.2 * 1.496e11f * 5 };
+	private double[] window = { -1.2 * DISTANCES[8], 1.2 * DISTANCES[8], -1.2 * DISTANCES[8], 1.2 * DISTANCES[8]};
 	private float speed = 1;
 	private int lastUpdateTime;
 
