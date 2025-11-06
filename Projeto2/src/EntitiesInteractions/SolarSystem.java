@@ -22,7 +22,7 @@ public class SolarSystem extends PApplet {
 			1.524f * EARTH_DISTANCE, 5.20f * EARTH_DISTANCE, 9.58f * EARTH_DISTANCE, 19.2f * EARTH_DISTANCE,
 			30.1f * EARTH_DISTANCE };
 
-	static final float[] ZOOM_FACTOR = { 0.0f, 0.387f, 0.723f, 1.00f, 1.524f, 5.20f, 9.58f, 19.2f, 30.1f};
+	static final float[] ZOOM_FACTOR = { 0.0f, 0.387f, 0.723f, 1.00f, 1.524f, 5.20f, 9.58f, 19.2f, 30.1f };
 
 	static final float[] SPEEDS = { 0.0f, 4.79e4f, 3.50e4f, 2.98e4f, 2.41e4f, 1.31e4f, 9.69e3f, 6.81e3f, 5.43e3f };
 
@@ -42,7 +42,6 @@ public class SolarSystem extends PApplet {
 
 	private SubPlot plt;
 	private Body sun;
-	
 
 	public void settings() {
 		size(800, 800);
@@ -94,24 +93,40 @@ public class SolarSystem extends PApplet {
 				-1.2 * EARTH_DISTANCE * currentZoomFactor, 1.2 * EARTH_DISTANCE * currentZoomFactor);
 
 		if (currentZoomFactor > ZOOM_FACTOR[zoomFactor]) {
-			if (currentZoomFactor > ZOOM_FACTOR[8]) currentZoomFactor -= 0.01 * 8;
-			else if (currentZoomFactor > ZOOM_FACTOR[7]) currentZoomFactor -= 0.01 * 7;
-			else if (currentZoomFactor > ZOOM_FACTOR[6]) currentZoomFactor -= 0.01 * 6;
-			else if (currentZoomFactor > ZOOM_FACTOR[5]) currentZoomFactor -= 0.01 * 5;
-			else if (currentZoomFactor > ZOOM_FACTOR[4]) currentZoomFactor -= 0.01 * 4;
-			else if (currentZoomFactor > ZOOM_FACTOR[3]) currentZoomFactor -= 0.01 * 3;
-			else if (currentZoomFactor > ZOOM_FACTOR[2]) currentZoomFactor -= 0.01 * 2;
-			else currentZoomFactor -= 0.01 * 1;
+			if (currentZoomFactor > ZOOM_FACTOR[8])
+				currentZoomFactor -= 0.01 * 8;
+			else if (currentZoomFactor > ZOOM_FACTOR[7])
+				currentZoomFactor -= 0.01 * 7;
+			else if (currentZoomFactor > ZOOM_FACTOR[6])
+				currentZoomFactor -= 0.01 * 6;
+			else if (currentZoomFactor > ZOOM_FACTOR[5])
+				currentZoomFactor -= 0.01 * 5;
+			else if (currentZoomFactor > ZOOM_FACTOR[4])
+				currentZoomFactor -= 0.01 * 4;
+			else if (currentZoomFactor > ZOOM_FACTOR[3])
+				currentZoomFactor -= 0.01 * 3;
+			else if (currentZoomFactor > ZOOM_FACTOR[2])
+				currentZoomFactor -= 0.01 * 2;
+			else
+				currentZoomFactor -= 0.01 * 1;
 			currentZoomFactor = max(ZOOM_FACTOR[zoomFactor], currentZoomFactor);
 		} else {
-			if (currentZoomFactor > ZOOM_FACTOR[8]) currentZoomFactor += 0.01 * 8;
-			else if (currentZoomFactor > ZOOM_FACTOR[7]) currentZoomFactor += 0.01 * 7;
-			else if (currentZoomFactor > ZOOM_FACTOR[6]) currentZoomFactor += 0.01 * 6;
-			else if (currentZoomFactor > ZOOM_FACTOR[5]) currentZoomFactor += 0.01 * 5;
-			else if (currentZoomFactor > ZOOM_FACTOR[4]) currentZoomFactor += 0.01 * 4;
-			else if (currentZoomFactor > ZOOM_FACTOR[3]) currentZoomFactor += 0.01 * 3;
-			else if (currentZoomFactor > ZOOM_FACTOR[2]) currentZoomFactor += 0.01 * 2;
-			else currentZoomFactor += 0.01 * 1;
+			if (currentZoomFactor > ZOOM_FACTOR[8])
+				currentZoomFactor += 0.01 * 8;
+			else if (currentZoomFactor > ZOOM_FACTOR[7])
+				currentZoomFactor += 0.01 * 7;
+			else if (currentZoomFactor > ZOOM_FACTOR[6])
+				currentZoomFactor += 0.01 * 6;
+			else if (currentZoomFactor > ZOOM_FACTOR[5])
+				currentZoomFactor += 0.01 * 5;
+			else if (currentZoomFactor > ZOOM_FACTOR[4])
+				currentZoomFactor += 0.01 * 4;
+			else if (currentZoomFactor > ZOOM_FACTOR[3])
+				currentZoomFactor += 0.01 * 3;
+			else if (currentZoomFactor > ZOOM_FACTOR[2])
+				currentZoomFactor += 0.01 * 2;
+			else
+				currentZoomFactor += 0.01 * 1;
 			currentZoomFactor = min(ZOOM_FACTOR[zoomFactor], currentZoomFactor);
 		}
 	}
@@ -129,7 +144,7 @@ public class SolarSystem extends PApplet {
 		addPlanet("Earth", DISTANCES[3], SPEEDS[3], MASSES[3], RADII[3], color(0, 180, 120));
 
 		addPlanet("Mars", DISTANCES[4], SPEEDS[4], MASSES[4], RADII[4], color(200, 50, 0));
-		
+
 		addPlanet("Jupiter", DISTANCES[5], SPEEDS[5], MASSES[5], RADII[5], color(180, 150, 100));
 
 		addPlanet("Saturn", DISTANCES[6], SPEEDS[6], MASSES[6], RADII[6], color(255, 210, 150));
@@ -148,14 +163,6 @@ public class SolarSystem extends PApplet {
 		bodies.add(planet);
 	}
 
-	private void setViewport(float x1, float y1, float x2, float y2) {
-		viewport[0] = x1;
-		viewport[1] = y1;
-		viewport[2] = x2;
-		viewport[3] = y2;
-		plt.setViewport(viewport);
-	}
-
 	private void setWindow(double x1, double y1, double x2, double y2) {
 		window[0] = x1;
 		window[1] = y1;
@@ -167,26 +174,26 @@ public class SolarSystem extends PApplet {
 	public void keyPressed() {
 		float speedIncrement = 2629744;
 
-		if (key == CODED) {
-			if (keyCode == UP) {
+		if (key == CODED)
+			if (keyCode == UP)
 				speed += speedIncrement;
-			} else if (keyCode == DOWN) {
+			else if (keyCode == DOWN)
 				speed -= speedIncrement;
-			}
-		}
-		if (key == 'c') {
+
+		if (key == 'c')
 			speed = 1;
-		}
-		if (key == 'v') {
+
+		if (key == 'v')
 			speed = 86400;
-		}
-		if (key == 'b') {
+
+		if (key == 'b')
 			speed = 2629744;
-		}
+
 		if (key == 'w') {
 			zoomFactor--;
 			zoomFactor = max(1, zoomFactor);
 		}
+
 		if (key == 's') {
 			zoomFactor++;
 			zoomFactor = min(8, zoomFactor);
