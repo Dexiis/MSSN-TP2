@@ -3,6 +3,7 @@ package EntitiesInteractions;
 import processing.core.PApplet;
 import processing.core.PVector;
 
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import Physics.*;
 
@@ -12,9 +13,9 @@ public class SolarSystem extends PApplet {
 
 	private static final float EARTH_DISTANCE = 1.496e11f;
 
-	//private static final float PLANET_RADIUS_SCALE = 0.000005f;
-	//private static final float SUN_RADIUS_SCALE = 0.0000005f;
-	
+	// private static final float PLANET_RADIUS_SCALE = 0.000005f;
+	// private static final float SUN_RADIUS_SCALE = 0.0000005f;
+
 	private static final float PLANET_RADIUS_SCALE = 10;
 	private static final float SUN_RADIUS_SCALE = 10;
 
@@ -33,7 +34,9 @@ public class SolarSystem extends PApplet {
 			1.02e26f };
 
 	private float[] viewport = { 0f, 0f, 1f, 1f };
-	private double[] window = { -1.2 * DISTANCES[8], 1.2 * DISTANCES[8], -1.2 * DISTANCES[8], 1.2 * DISTANCES[8]};
+	private float maxViewDistance = DISTANCES[8];
+	private double[] window = { -1.2 * maxViewDistance, 1.2 * maxViewDistance, -1.2 * maxViewDistance,
+			1.2 * maxViewDistance };
 	private float speed = 1;
 	private int lastUpdateTime;
 
@@ -120,6 +123,22 @@ public class SolarSystem extends PApplet {
 		bodies.add(planet);
 	}
 
+	private void setViewport(float x1, float y1, float x2, float y2) {
+		viewport[0] = x1;
+		viewport[1] = y1;
+		viewport[2] = x2;
+		viewport[3] = y2;
+		plt.setViewport(viewport);
+	}
+	
+	private void setWindow(double x1, double y1, double x2, double y2) {
+		window[0] = x1;
+		window[1] = y1;
+		window[2] = x2;
+		window[3] = y2;
+		plt.setWindow(window);
+	}
+
 	public void keyPressed() {
 		float speedIncrement = 2629744;
 
@@ -141,6 +160,10 @@ public class SolarSystem extends PApplet {
 		}
 		if (key == 'n') {
 			speed = 31556926;
+		}
+		if (key == 'w') {
+			setViewport(0.4f, 0.4f, 0.6f, 0.6f);
+			setWindow(-1.2 * DISTANCES[1], 1.2 * DISTANCES[1], -1.2 * DISTANCES[1], 1.2 * DISTANCES[1]);
 		}
 	}
 }

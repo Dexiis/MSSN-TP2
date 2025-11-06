@@ -8,6 +8,7 @@ public class Body extends Mover {
 	protected int color;
 	protected float radius;
 	protected String name;
+	private float[] positions;
 
 	public Body(String name, PVector posisiton, PVector velocity, float mass, float radius, int color) {
 		super(posisiton, velocity, mass);
@@ -22,11 +23,11 @@ public class Body extends Mover {
 
 	public void display(PApplet p, SubPlot plt) {
 		p.pushStyle();
-		float[] pp = plt.getPixelCoord(position.x, position.y);
+		positions = plt.getPixelCoord(position.x, position.y);
 		float[] r = plt.getVectorCoord(radius, radius);
 		p.noStroke();
 		p.fill(color);
-		if (this.name != "Sun") p.circle(pp[0], pp[1], 2*r[0]*50); 
+		p.circle(positions[0], positions[1], 2 * r[0]);
 		p.popStyle();
 	}
 }
