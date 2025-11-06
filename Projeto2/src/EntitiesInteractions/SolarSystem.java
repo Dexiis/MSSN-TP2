@@ -32,7 +32,7 @@ public class SolarSystem extends PApplet {
 			1.02e26f };
 
 	private float[] viewport = { 0f, 0f, 1f, 1f };
-	private int zoomFactor = 4;
+	private int zoomFactor = 3;
 	private float maxViewDistance = DISTANCES[zoomFactor];
 	private float currentZoomFactor = ZOOM_FACTOR[zoomFactor];
 	private double[] window = { -1.2 * maxViewDistance, 1.2 * maxViewDistance, -1.2 * maxViewDistance,
@@ -90,14 +90,28 @@ public class SolarSystem extends PApplet {
 		text("Controls: [C] 1s/s, [V] 1D/s, [B] 1M/s", 10, 50);
 		text("Controls: [W] Zoom In, [S] Zoom Out,", 10, 70);
 
-		setWindow(-1.2 * maxViewDistance * currentZoomFactor, 1.2 * maxViewDistance * currentZoomFactor,
-				-1.2 * maxViewDistance * currentZoomFactor, 1.2 * maxViewDistance * currentZoomFactor);
+		setWindow(-1.2 * EARTH_DISTANCE * currentZoomFactor, 1.2 * EARTH_DISTANCE * currentZoomFactor,
+				-1.2 * EARTH_DISTANCE * currentZoomFactor, 1.2 * EARTH_DISTANCE * currentZoomFactor);
 
 		if (currentZoomFactor > ZOOM_FACTOR[zoomFactor]) {
-			currentZoomFactor -= 0.005 * zoomFactor;
+			if (currentZoomFactor > ZOOM_FACTOR[8]) currentZoomFactor -= 0.01 * 8;
+			else if (currentZoomFactor > ZOOM_FACTOR[7]) currentZoomFactor -= 0.01 * 7;
+			else if (currentZoomFactor > ZOOM_FACTOR[6]) currentZoomFactor -= 0.01 * 6;
+			else if (currentZoomFactor > ZOOM_FACTOR[5]) currentZoomFactor -= 0.01 * 5;
+			else if (currentZoomFactor > ZOOM_FACTOR[4]) currentZoomFactor -= 0.01 * 4;
+			else if (currentZoomFactor > ZOOM_FACTOR[3]) currentZoomFactor -= 0.01 * 3;
+			else if (currentZoomFactor > ZOOM_FACTOR[2]) currentZoomFactor -= 0.01 * 2;
+			else currentZoomFactor -= 0.01 * 1;
 			currentZoomFactor = max(ZOOM_FACTOR[zoomFactor], currentZoomFactor);
 		} else {
-			currentZoomFactor += 0.02 * zoomFactor;
+			if (currentZoomFactor > ZOOM_FACTOR[8]) currentZoomFactor += 0.01 * 8;
+			else if (currentZoomFactor > ZOOM_FACTOR[7]) currentZoomFactor += 0.01 * 7;
+			else if (currentZoomFactor > ZOOM_FACTOR[6]) currentZoomFactor += 0.01 * 6;
+			else if (currentZoomFactor > ZOOM_FACTOR[5]) currentZoomFactor += 0.01 * 5;
+			else if (currentZoomFactor > ZOOM_FACTOR[4]) currentZoomFactor += 0.01 * 4;
+			else if (currentZoomFactor > ZOOM_FACTOR[3]) currentZoomFactor += 0.01 * 3;
+			else if (currentZoomFactor > ZOOM_FACTOR[2]) currentZoomFactor += 0.01 * 2;
+			else currentZoomFactor += 0.01 * 1;
 			currentZoomFactor = min(ZOOM_FACTOR[zoomFactor], currentZoomFactor);
 		}
 	}

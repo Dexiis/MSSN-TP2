@@ -28,10 +28,8 @@ public abstract class Mover {
         PVector direction = PVector.sub(this.position, body.position); 
         float distance = direction.mag();
         
-        float minDistance = 1e6f; 
-        if (distance < minDistance) {
-            distance = minDistance; 
-        }
+        float minDistance = 1e6f;
+        distance = Math.max(distance, minDistance);
         
         float strength = (float) (G * this.mass * body.mass / Math.pow(distance, 2));
         
