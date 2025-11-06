@@ -17,8 +17,8 @@ public class Body extends Mover {
 		this.name = name;
 	}
 
-	public Body(PVector pos) {
-		super(pos, new PVector(), 0f);
+	public Body(PVector position) {
+		super(position, new PVector(), 0f);
 	}
 
 	public void display(PApplet p, SubPlot plt) {

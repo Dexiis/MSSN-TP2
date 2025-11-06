@@ -18,9 +18,9 @@ public abstract class Mover {
 
     public void applyForce(PVector force) { acceleration.add(PVector.div(force, mass)); }
 
-    public void move(float speedUp) {
-        velocity.add(acceleration.mult(speedUp));
-        position.add(PVector.mult(velocity, speedUp));
+    public void move(float time) {
+        velocity.add(acceleration.mult(time));
+        position.add(PVector.mult(velocity, time));
         acceleration.mult(0);
     }
 
