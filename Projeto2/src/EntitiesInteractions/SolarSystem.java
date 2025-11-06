@@ -3,7 +3,6 @@ package EntitiesInteractions;
 import processing.core.PApplet;
 import processing.core.PVector;
 
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import Physics.*;
 
@@ -13,11 +12,8 @@ public class SolarSystem extends PApplet {
 
 	private static final float EARTH_DISTANCE = 1.496e11f;
 
-	// private static final float PLANET_RADIUS_SCALE = 0.000005f;
-	// private static final float SUN_RADIUS_SCALE = 0.0000005f;
-
-	private static final float PLANET_RADIUS_SCALE = 10;
-	private static final float SUN_RADIUS_SCALE = 10;
+	private static final float PLANET_RADIUS_SCALE = 300;
+	private static final float SUN_RADIUS_SCALE = 40;
 
 	static final String[] NAMES = { "Sun", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus",
 			"Neptune" };
@@ -25,6 +21,8 @@ public class SolarSystem extends PApplet {
 	static final float[] DISTANCES = { 0.0f, 0.387f * EARTH_DISTANCE, 0.723f * EARTH_DISTANCE, 1.00f * EARTH_DISTANCE,
 			1.524f * EARTH_DISTANCE, 5.20f * EARTH_DISTANCE, 9.58f * EARTH_DISTANCE, 19.2f * EARTH_DISTANCE,
 			30.1f * EARTH_DISTANCE };
+
+	static final float[] ZOOM_FACTOR = { 0.0f, 0.387f, 0.723f, 1.00f, 1.524f, 5.20f, 9.58f, 19.2f, 30.1f};
 
 	static final float[] SPEEDS = { 0.0f, 4.79e4f, 3.50e4f, 2.98e4f, 2.41e4f, 1.31e4f, 9.69e3f, 6.81e3f, 5.43e3f };
 
@@ -34,16 +32,20 @@ public class SolarSystem extends PApplet {
 			1.02e26f };
 
 	private float[] viewport = { 0f, 0f, 1f, 1f };
-	private float maxViewDistance = DISTANCES[8];
+	private int zoomFactor = 4;
+	private float maxViewDistance = DISTANCES[zoomFactor];
+	private float currentZoomFactor = ZOOM_FACTOR[zoomFactor];
 	private double[] window = { -1.2 * maxViewDistance, 1.2 * maxViewDistance, -1.2 * maxViewDistance,
 			1.2 * maxViewDistance };
 	private float speed = 1;
 	private int lastUpdateTime;
 
 	private SubPlot plt;
+	private Body sun;
+	
 
 	public void settings() {
-		size(1600, 900);
+		size(800, 800);
 	}
 
 	public void setup() {
@@ -68,14 +70,11 @@ public class SolarSystem extends PApplet {
 		float[] pp = plt.getBoundingBox();
 		rect(pp[0], pp[1], pp[2], pp[3]);
 
-		for (Body body1 : bodies) {
-			body1.setAcceleration(new PVector(0, 0));
-
-			for (Body body2 : bodies) {
-				if (body1 != body2) {
-					PVector force = body2.attraction(body1);
-					body1.applyForce(force);
-				}
+		for (Body body : bodies) {
+			if (body != sun) {
+				body.setAcceleration(new PVector(0, 0));
+				PVector force = sun.attraction(body);
+				body.applyForce(force);
 			}
 		}
 
@@ -88,12 +87,24 @@ public class SolarSystem extends PApplet {
 		String speedText = "Velocity: " + speed + " times the normal speed";
 		text(speedText, 10, 10);
 		text("Controls: [↑] Speed Up, [↓] Slow Down", 10, 30);
-		text("Controls: [C] 1s/s, [V] 1D/s, [B] 1M/s, [N] 1Y/s", 10, 50);
+		text("Controls: [C] 1s/s, [V] 1D/s, [B] 1M/s", 10, 50);
+		text("Controls: [W] Zoom In, [S] Zoom Out,", 10, 70);
+
+		setWindow(-1.2 * maxViewDistance * currentZoomFactor, 1.2 * maxViewDistance * currentZoomFactor,
+				-1.2 * maxViewDistance * currentZoomFactor, 1.2 * maxViewDistance * currentZoomFactor);
+
+		if (currentZoomFactor > ZOOM_FACTOR[zoomFactor]) {
+			currentZoomFactor -= 0.005 * zoomFactor;
+			currentZoomFactor = max(ZOOM_FACTOR[zoomFactor], currentZoomFactor);
+		} else {
+			currentZoomFactor += 0.02 * zoomFactor;
+			currentZoomFactor = min(ZOOM_FACTOR[zoomFactor], currentZoomFactor);
+		}
 	}
 
 	private void initializeSolarSystem() {
 
-		Body sun = new Body("Sun", new PVector(0, -DISTANCES[0]), new PVector(SPEEDS[0], 0), MASSES[0],
+		sun = new Body("Sun", new PVector(0, -DISTANCES[0]), new PVector(SPEEDS[0], 0), MASSES[0],
 				RADII[0] * SUN_RADIUS_SCALE, color(255, 180, 0));
 		bodies.add(sun);
 
@@ -104,7 +115,7 @@ public class SolarSystem extends PApplet {
 		addPlanet("Earth", DISTANCES[3], SPEEDS[3], MASSES[3], RADII[3], color(0, 180, 120));
 
 		addPlanet("Mars", DISTANCES[4], SPEEDS[4], MASSES[4], RADII[4], color(200, 50, 0));
-
+		
 		addPlanet("Jupiter", DISTANCES[5], SPEEDS[5], MASSES[5], RADII[5], color(180, 150, 100));
 
 		addPlanet("Saturn", DISTANCES[6], SPEEDS[6], MASSES[6], RADII[6], color(255, 210, 150));
@@ -130,7 +141,7 @@ public class SolarSystem extends PApplet {
 		viewport[3] = y2;
 		plt.setViewport(viewport);
 	}
-	
+
 	private void setWindow(double x1, double y1, double x2, double y2) {
 		window[0] = x1;
 		window[1] = y1;
@@ -158,12 +169,13 @@ public class SolarSystem extends PApplet {
 		if (key == 'b') {
 			speed = 2629744;
 		}
-		if (key == 'n') {
-			speed = 31556926;
-		}
 		if (key == 'w') {
-			setViewport(0.4f, 0.4f, 0.6f, 0.6f);
-			setWindow(-1.2 * DISTANCES[1], 1.2 * DISTANCES[1], -1.2 * DISTANCES[1], 1.2 * DISTANCES[1]);
+			zoomFactor--;
+			zoomFactor = max(1, zoomFactor);
+		}
+		if (key == 's') {
+			zoomFactor++;
+			zoomFactor = min(8, zoomFactor);
 		}
 	}
 }
