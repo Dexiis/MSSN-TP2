@@ -31,12 +31,14 @@ public abstract class Mover {
         return r.normalize().mult(strength);
     }
 
-    public PVector getPos() { return pos; }
-    public PVector getVel() { return vel; }
-    public PVector getAcc() { return acc; }
-
+    public PVector getPos() { return this.pos; }
+    public PVector getVel() { return this.vel; }
+    public PVector getAcc() { return this.acc; }
+    public float getMass() { return this.mass; }
+    
     public void setAcc(PVector acc) {this.acc = acc;}
     public void setVel(PVector vel) {this.vel = vel;}
     public void setPos(PVector pos) {this.pos = pos;}
+    
 
 }

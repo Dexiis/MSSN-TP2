@@ -8,7 +8,7 @@ public class MainMenu extends PApplet {
 	private String option1 = "Solar System Simulation";
 	private String option2 = "Individual Behaviours between identities";
 	private String option3 = "Flocking";
-	private String option4 = "Normandy War Simulation";
+	private String option4 = "Normandy Landings Simulation";
 	private String option5 = "Space War Simulation";
 	
 	public void settings() {
