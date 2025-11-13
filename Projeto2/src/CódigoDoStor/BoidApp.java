@@ -1,7 +1,4 @@
-package Apps.AutonomousAgent;
-import Apps.Physics.Body;
-import Setup.IProcessingApp;
-import Tools.SubPlot;
+package CódigoDoStor;
 import processing.core.PApplet;
 import processing.core.PVector;
 

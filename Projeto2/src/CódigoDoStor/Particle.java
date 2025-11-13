@@ -23,7 +23,6 @@ public class Particle extends Body {
 
     @Override
     public void display(PApplet p, SubPlot plt) {
-
         p.pushStyle();
         float alpha = PApplet.map(timer, 0, lifespan, 255, 0);
         p.fill(color, alpha);
