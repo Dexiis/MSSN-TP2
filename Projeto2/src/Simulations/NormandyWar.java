@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import CódigoDoStor.Body;
 import CódigoDoStor.SubPlot;
+import CódigoDoStor.Water;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -16,6 +17,7 @@ public class NormandyWar extends PApplet {
     private SubPlot plt;
     private double[] window = {0f, 800, 0f, 600};
     private float[] viewport = {0f, 0f, 1f, 1f};
+    private Water water = new Water(5, color(0, 0, 255));
 
     public void settings() {
         size(800, 600);
@@ -33,10 +35,17 @@ public class NormandyWar extends PApplet {
         float dt = (now - lastUpdateTime) / 1000f;
         lastUpdateTime = now;
         
+        water.display(this, plt);
+        
         for(Body soldier : soldiers) {
         	PVector weightForce = new PVector(0, soldier.getMass() * g); // P = mg
-        	soldier.applyForce(weightForce);
-        	soldier.move(dt);
+        	if(soldier.getPos().y <= 0) {
+        		
+        	} else {
+        		soldier.applyForce(weightForce);
+            	soldier.move(dt);
+        	}
+        	
         	soldier.display(this, plt);
         }
     }
