@@ -1,4 +1,4 @@
-package CódigoDoStor;
+package Physics;
 
 public class DNA {
 

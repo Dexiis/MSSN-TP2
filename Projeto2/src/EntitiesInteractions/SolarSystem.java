@@ -38,7 +38,7 @@ public class SolarSystem extends PApplet {
 	private double[] window = { -1.2 * maxViewDistance, 1.2 * maxViewDistance, -1.2 * maxViewDistance,
 			1.2 * maxViewDistance };
 	private float speed = 1;
-	private int lastUpdateTime;
+	private float lastUpdateTime;
 
 	private SubPlot plt;
 	private Body sun;
@@ -133,7 +133,7 @@ public class SolarSystem extends PApplet {
 
 	private void initializeSolarSystem() {
 
-		sun = new Body("Sun", new PVector(0, -DISTANCES[0]), new PVector(SPEEDS[0], 0), MASSES[0],
+		sun = new Planet("Sun", new PVector(0, -DISTANCES[0]), new PVector(SPEEDS[0], 0), MASSES[0],
 				RADII[0] * SUN_RADIUS_SCALE, color(255, 180, 0));
 		bodies.add(sun);
 
@@ -159,7 +159,7 @@ public class SolarSystem extends PApplet {
 		PVector position = new PVector(0, -distance);
 		PVector velocity = new PVector(speed, 0);
 
-		Body planet = new Body(name, position, velocity, mass, (float) (radius * PLANET_RADIUS_SCALE), planetColor);
+		Body planet = new Planet(name, position, velocity, mass, (float) (radius * PLANET_RADIUS_SCALE), planetColor);
 		bodies.add(planet);
 	}
 

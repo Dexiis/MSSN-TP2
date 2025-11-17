@@ -32,6 +32,15 @@ public class SubPlot {
 		return getPixelCoord(xy[0], xy[1]);
 	}
 
+	public float[] getDimInPixel(double dimx, double dimy) {
+		float[] d = new float[2];
+		d[0] = (float) (dimx * mx);
+		d[1] = (float) (-dimy * my);
+
+		return d;
+
+	}
+
 	public double[] getWorldCoord(double xx, double yy) {
 		double[] coord = new double[2];
 		coord[0] = window[0] + (xx - bx) / mx;

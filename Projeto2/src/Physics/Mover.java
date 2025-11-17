@@ -39,6 +39,7 @@ public abstract class Mover {
     public PVector getPosition() { return position; }
     public PVector getVelocity() { return velocity; }
     public PVector getAcceleration() { return acceleration; }
+    public float getMass() { return mass; }
 
     public void setAcceleration(PVector acceleration) {this.acceleration = acceleration;}
     public void setVelocity(PVector velocity) {this.velocity = velocity;}

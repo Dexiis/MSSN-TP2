@@ -5,6 +5,8 @@ import processing.core.PVector;
 import java.util.ArrayList;
 import java.util.List;
 
+import Physics.Particle;
+
 public class ParticleSystem extends Body {
 
     private List<Particle> particles;

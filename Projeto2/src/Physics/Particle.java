@@ -1,4 +1,4 @@
-package CódigoDoStor;
+package Physics;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -27,7 +27,7 @@ public class Particle extends Body {
         float alpha = PApplet.map(timer, 0, lifespan, 255, 0);
         p.fill(color, alpha);
 
-        float[] pp = plt.getPixelCoord(pos.x, pos.y);
+        float[] pp = plt.getPixelCoord(position.x, position.y);
         float[] r = plt.getVectorCoord(radius, radius);
 
         p.noStroke();

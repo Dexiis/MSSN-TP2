@@ -1,4 +1,4 @@
-package CódigoDoStor;
+package Physics;
 import processing.core.PApplet;
 
 public class Water extends Fluid {
@@ -12,7 +12,7 @@ public class Water extends Fluid {
         this.color = color;
     }
 
-    public boolean isInside(Mover m) { return (m.getPos().y <= waterHeight); }
+    public boolean isInside(Mover m) { return (m.getPosition().y <= waterHeight); }
 
     public void display(PApplet p, SubPlot plt) {
         p.pushStyle();

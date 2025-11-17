@@ -1,4 +1,4 @@
-package CódigoDoStor;
+package Physics;
 import processing.core.PVector;
 
 public interface IBehaviour {

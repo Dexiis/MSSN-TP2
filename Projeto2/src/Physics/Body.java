@@ -7,18 +7,12 @@ public class Body extends Mover {
 
 	protected int color;
 	protected float radius;
-	protected String name;
 	private float[] positions;
 
-	public Body(String name, PVector posisiton, PVector velocity, float mass, float radius, int color) {
+	public Body(PVector posisiton, PVector velocity, float mass, float radius, int color) {
 		super(posisiton, velocity, mass);
 		this.color = color;
 		this.radius = radius;
-		this.name = name;
-	}
-
-	public Body(PVector position) {
-		super(position, new PVector(), 0f);
 	}
 
 	public void display(PApplet p, SubPlot plt) {
