@@ -54,7 +54,7 @@ public class IndividualBehaviour extends PApplet {
 	public void keyPressed() {
 		int increment = 1;
 		
-		if(key == 'A') {
+		if(key == 'w') {
 			boid.setVelocity(increment, true);
 			boid.setForce(increment, true);
 		} else if (key == 's') {

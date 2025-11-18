@@ -15,6 +15,7 @@ public class SolarSystem extends PApplet {
 	private ArrayList<CelestialBody> bodies;
 	private ArrayList<CelestialBody> asteroids;
 	private ArrayList<Particle> particles;
+	private ArrayList<Particle> deadParticles;
 	private ArrayList<PVector> stars;
 
 	private static final float EARTH_DISTANCE = 1.496e11f;
@@ -57,6 +58,7 @@ public class SolarSystem extends PApplet {
 		bodies = new ArrayList<>();
 		asteroids = new ArrayList<>();
 		particles = new ArrayList<>();
+		deadParticles = new ArrayList<>();
 		initializeSolarSystem();
 		background(0);
 
@@ -80,7 +82,41 @@ public class SolarSystem extends PApplet {
 		noStroke();
 		fill(255);
 
-		sun.display(this, plt);
+		for (PVector starPosition : stars) {
+			float[] screenCoords = plt.getPixelCoord(starPosition.x, starPosition.y);
+
+			float screenX = screenCoords[0];
+			float screenY = screenCoords[1];
+
+			circle(screenX, screenY, .5f);
+		}
+
+		for (Particle particle : particles) {
+			if (particle.isDead())
+				deadParticles.add(particle);
+			particle.move(speed * dt);
+			particle.display(this, plt);
+			particle.setAcceleration(new PVector(0, 0));
+		}
+		
+		System.out.println(speed * dt);
+		
+
+		if (!deadParticles.isEmpty()) {
+			particles.removeAll(deadParticles);
+			deadParticles.clear();
+		}
+
+		for (CelestialBody body : bodies) {
+			body.setAcceleration(new PVector(0, 0));
+			PVector force = sun.attraction(body);
+			body.applyForce(force);
+		}
+
+		for (CelestialBody body : bodies) {
+			body.move(speed * dt);
+			body.display(this, plt);
+		}
 
 		for (CelestialBody asteroid : asteroids) {
 			asteroid.setAcceleration(new PVector(0, 0));
@@ -94,29 +130,7 @@ public class SolarSystem extends PApplet {
 			createParticle(asteroid);
 		}
 
-		for (Particle particle : particles)
-			if (particle.isDead())
-				particles.remove(particle);
-
-		for (CelestialBody body : bodies) {
-			body.setAcceleration(new PVector(0, 0));
-			PVector force = sun.attraction(body);
-			body.applyForce(force);
-		}
-
-		for (CelestialBody body : bodies) {
-			body.move(speed * dt);
-			body.display(this, plt);
-		}
-
-		for (PVector starPosition : stars) {
-			float[] screenCoords = plt.getPixelCoord(starPosition.x, starPosition.y);
-
-			float screenX = screenCoords[0];
-			float screenY = screenCoords[1];
-
-			circle(screenX, screenY, .5f);
-		}
+		sun.display(this, plt);
 
 		fill(255);
 		String speedText = "Velocity: " + speed + " times the normal speed";
@@ -256,7 +270,7 @@ public class SolarSystem extends PApplet {
 	}
 
 	private void createParticle(CelestialBody asteroid) {
-		final float PARTICLE_LIFESPAN = 2629744f;
+		final float PARTICLE_LIFESPAN = 2629744f * 2;
 
 		PVector pos = asteroid.getPosition();
 		PVector vel = asteroid.getVelocity();
@@ -268,8 +282,8 @@ public class SolarSystem extends PApplet {
 		PVector launchDirection = oppositeDirection.copy();
 		launchDirection.rotate(randomAngle);
 
-		final float LAUNCH_SPEED_FACTOR = 0.4f;
-		float launchMagnitude = vel.mag() * LAUNCH_SPEED_FACTOR;
+		final float LAUNCH_SPEED_FACTOR = 0.7f;
+		float launchMagnitude = vel.mag() * LAUNCH_SPEED_FACTOR / speed;
 
 		PVector launchVelocity = PVector.mult(launchDirection, launchMagnitude);
 
