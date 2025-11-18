@@ -1,12 +1,11 @@
 import processing.core.PApplet;
-import EntitiesInteractions.*;
-import Simulations.*;
+import TP2.Scenarios.*;
 
 public class MainMenu extends PApplet {
 
 	private String title = "Chose what to open:";
 	private String option1 = "Solar System Simulation";
-	private String option2 = "Individual Behaviours between identities";
+	private String option2 = "Individual Behaviours between Identities";
 	private String option3 = "Flocking";
 	private String option4 = "Normandy Landings Simulation";
 	private String option5 = "Space War Simulation";
@@ -58,7 +57,7 @@ public class MainMenu extends PApplet {
 		} else if (checkButton(200, x, w, h)) {
 			PApplet.main(Flocking.class);
 		} else if (checkButton(260, x, w, h)) {
-			PApplet.main(NormandyWar.class);
+			PApplet.main(NormandyLanding.class);
 		} else if (checkButton(320, x, w, h)) {
 			PApplet.main(SpaceWar.class);
 		}
