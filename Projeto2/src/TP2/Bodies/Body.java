@@ -9,7 +9,7 @@ public class Body extends Movement {
 
 	protected int color;
 	protected float radius;
-	private float[] positions;
+	protected float[] positions;
 
 	protected Body(PVector posisiton, PVector velocity, float mass, float radius, int color) {
 		super(posisiton, velocity, mass);
