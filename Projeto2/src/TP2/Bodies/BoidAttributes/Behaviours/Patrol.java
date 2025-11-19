@@ -1,10 +1,8 @@
 package TP2.Bodies.BoidAttributes.Behaviours;
 
 import java.util.ArrayList;
-
 import TP2.Bodies.Boid;
 import TP2.Bodies.BoidAttributes.Behaviour;
-
 import processing.core.PVector;
 
 public class Patrol extends Behaviour {
@@ -14,46 +12,39 @@ public class Patrol extends Behaviour {
 
 	public Patrol(float weight) {
 		super(weight);
-		path = definePath();
+		defineDefaultPath();
+	}
+
+	public void definePath(ArrayList<PVector> newPath) {
+		this.path = newPath;
+		if (!path.isEmpty()) 
+			this.currentIndex = 0;
+	}
+
+	private void defineDefaultPath() {
+		this.path = new ArrayList<>();
+		path.add(new PVector(8f, -8f));
+		path.add(new PVector(-8f, -8f));
+		path.add(new PVector(-8f, 8f));
+		path.add(new PVector(8f, 8f));
+		
 	}
 
 	@Override
 	public PVector getDesiredVelocity(Boid me) {
-		PVector target = path.get(currentIndex);
-		PVector vd = PVector.sub(target, me.getPosition());
-		float dist = vd.mag();
-		float R = me.getDNA().radiusArrive;
-		if (dist < R) {
-			vd.mult(dist / R);
+		if (path.isEmpty())
+			return new PVector(0, 0);
+
+		PVector vd = me.getToroidalDistanceVector(path.get(currentIndex));
+		
+		float distance = vd.mag();
+		float radius = me.getDNA().radiusArrive;
+
+		if (distance < radius) {
+			vd.mult(distance / radius);
 			currentIndex = (currentIndex + 1) % path.size();
 		}
+		
 		return vd;
 	}
-
-	private ArrayList<PVector> definePath() {
-		ArrayList<PVector> p = new ArrayList<>();
-		p.add(new PVector(8f, 0f));
-		p.add(new PVector(4f, 6.93f));
-		p.add(new PVector(-4f, 6.93f));
-		p.add(new PVector(-8f, 0f));
-		p.add(new PVector(-4f, -6.93f));
-		p.add(new PVector(4f, -6.93f));
-		return p;
-	}
-
-	public void getNearPos(Boid me) {
-		float minDist = Float.MAX_VALUE;
-		int nearestIndex = 0;
-
-		for (int i = 0; i < path.size(); i++) {
-			float d = PVector.dist(me.getPosition(), path.get(i));
-			if (d < minDist) {
-				minDist = d;
-				nearestIndex = i;
-			}
-		}
-
-		currentIndex = nearestIndex;
-	}
-
 }

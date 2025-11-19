@@ -17,7 +17,7 @@ public class Arrive extends Behaviour {
 	@Override
 	public PVector getDesiredVelocity(Boid me) {
 		Body bodyTarget = me.getEye().getTarget();
-		PVector direction = PVector.sub(bodyTarget.getPosition(), me.getPosition());
+		PVector direction = me.getToroidalDistanceVector(bodyTarget.getPosition());
 
 		float distance = direction.mag();
 		float breakingDistance = me.getDNA().radiusArrive;

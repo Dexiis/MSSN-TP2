@@ -2,7 +2,6 @@ package TP2.Bodies.BoidAttributes.Behaviours;
 
 import TP2.Bodies.Boid;
 import TP2.Bodies.BoidAttributes.Behaviour;
-
 import processing.core.PVector;
 
 public class Wander extends Behaviour {
@@ -13,17 +12,23 @@ public class Wander extends Behaviour {
 
 	@Override
 	public PVector getDesiredVelocity(Boid me) {
-		float phiWander = me.getPhiWander();
 
-		PVector center = me.getPosition().copy();
-		center.add(me.getVelocity().copy().mult(me.getDNA().deltaTWander));
+		float newPhiWander = me.getPhiWander();
+		newPhiWander += 2 * (Math.random() - 0.5) * me.getDNA().deltaPhiWander;
+		me.setPhiWander(newPhiWander);
 
-		PVector target = new PVector(me.getDNA().radiusWander * (float) Math.cos(phiWander),
-				me.getDNA().radiusWander * (float) Math.sin(phiWander));
-		target.add(center);
+		PVector center = me.getVelocity().copy();
+		center.normalize().mult(me.getDNA().deltaTWander);
+		center.add(me.getPosition());
 
-		phiWander += 2 * (Math.random() - 0.5) * me.getDNA().deltaPhiWander;
-		return PVector.sub(target, me.getPosition());
+		PVector targetDisplacement = new PVector(me.getDNA().radiusWander * (float) Math.cos(newPhiWander),
+				me.getDNA().radiusWander * (float) Math.sin(newPhiWander));
+		PVector targetPosition = PVector.add(center, targetDisplacement);
+
+		PVector desiredVelocity = me.getToroidalDistanceVector(targetPosition);
+
+		desiredVelocity.setMag(me.getDNA().maxSpeed);
+
+		return desiredVelocity;
 	}
-
 }

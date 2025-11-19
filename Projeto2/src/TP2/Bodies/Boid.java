@@ -16,7 +16,7 @@ public class Boid extends Body {
 	private PShape shape;
 	protected DNA dna;
 	protected Eye eye;
-	
+
 	private List<Behaviour> behaviours;
 	protected float phiWander;
 	private double[] window;
@@ -77,6 +77,10 @@ public class Boid extends Body {
 		shape.endShape(PConstants.CLOSE);
 	}
 
+	public void setPhiWander(float newPhiWander) {
+		this.phiWander = newPhiWander;
+	}
+
 	public DNA getDNA() {
 		return dna;
 	}
@@ -99,6 +103,11 @@ public class Boid extends Body {
 	public void removeBehaviour(Behaviour behaviour) {
 		if (behaviours.contains(behaviour))
 			behaviours.remove(behaviour);
+		updateSumWeights();
+	}
+
+	public void clearBehaviour() {
+		behaviours.clear();
 		updateSumWeights();
 	}
 
@@ -136,6 +145,29 @@ public class Boid extends Body {
 			position.x -= window[1] - window[0];
 		if (position.y >= window[3])
 			position.y -= window[3] - window[2];
+	}
+
+	public PVector getToroidalDistanceVector(PVector targetPosition) {
+		PVector distance = PVector.sub(targetPosition, position);
+
+		double worldWidth = window[1] - window[0];
+		double worldHeight = window[3] - window[2];
+
+		if (Math.abs(distance.x) > worldWidth / 2) {
+			if (distance.x > 0)
+				distance.x -= worldWidth;
+			else
+				distance.x += worldWidth;
+		}
+
+		if (Math.abs(distance.y) > worldHeight / 2) {
+			if (distance.y > 0)
+				distance.y -= worldHeight;
+			else
+				distance.y += worldHeight;
+		}
+
+		return distance;
 	}
 
 	@Override
