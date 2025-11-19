@@ -1,7 +1,6 @@
 package TP2.Scenarios;
 
 import TP2.Bodies.CelestialBody;
-import TP2.Bodies.Body;
 import TP2.Bodies.Particle;
 import TP2.Core.*;
 
@@ -9,7 +8,6 @@ import processing.core.PApplet;
 import processing.core.PVector;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class SolarSystem extends PApplet {
 
@@ -59,8 +57,9 @@ public class SolarSystem extends PApplet {
 		bodies = new ArrayList<>();
 		asteroids = new ArrayList<>();
 		particles = new ArrayList<>();
+		stars = new ArrayList<>();
 		initializeSolarSystem();
-		
+
 		background(0);
 		textSize(16);
 		textAlign(LEFT, TOP);
@@ -84,22 +83,13 @@ public class SolarSystem extends PApplet {
 
 		for (PVector starPosition : stars) {
 			float[] screenCoords = plt.getPixelCoord(starPosition.x, starPosition.y);
-
-			float screenX = screenCoords[0];
-			float screenY = screenCoords[1];
-
-			circle(screenX, screenY, .5f);
+			circle(screenCoords[0], screenCoords[1], .5f);
 		}
 
-		for (Particle particle : particles) {
-			particle.setAcceleration(new PVector(0, 0));
-		}
-
-		Iterator<Particle> itenerator1 = particles.iterator();
-		while (itenerator1.hasNext()) {
-			Particle particle = itenerator1.next();
+		for (int i = particles.size() - 1; i >= 0; i--) {
+			Particle particle = particles.get(i);
 			if (particle.isDead())
-				itenerator1.remove();
+				particles.remove(particle);
 			else {
 				particle.move(speed * dt);
 				particle.display(this, plt);
@@ -124,10 +114,8 @@ public class SolarSystem extends PApplet {
 		}
 
 		timer += speed * dt;
-		Iterator<CelestialBody> itenerator2 = asteroids.iterator();
-		while (itenerator2.hasNext()) {
-			CelestialBody asteroid = itenerator2.next();
-
+		for (int i = asteroids.size() - 1; i >= 0; i--) {
+			CelestialBody asteroid = asteroids.get(i);
 			asteroid.move(speed * dt);
 			asteroid.display(this, plt);
 
@@ -136,10 +124,10 @@ public class SolarSystem extends PApplet {
 
 			float distance = PVector.dist(sun.getPosition(), asteroid.getPosition());
 			if (distance > EARTH_DISTANCE * 8)
-				itenerator2.remove();
+				asteroids.remove(asteroid);
 
 			else if (distance < sun.getRadius() + asteroid.getRadius())
-				itenerator2.remove();
+				asteroids.remove(asteroid);
 
 		}
 		if (timer > 126) // 10 a cada dia
@@ -154,9 +142,6 @@ public class SolarSystem extends PApplet {
 		text("Controls: [C] 1s/s, [V] 1D/s, [B] 1M/s", 10, 50);
 		text("Controls: [W] Zoom In, [S] Zoom Out,", 10, 70);
 
-		setWindow(-1.2 * EARTH_DISTANCE * currentZoomFactor, 1.2 * EARTH_DISTANCE * currentZoomFactor,
-				-1.2 * EARTH_DISTANCE * currentZoomFactor, 1.2 * EARTH_DISTANCE * currentZoomFactor);
-
 		for (int i = ZOOM_FACTOR.length - 1; i >= 1; i--) {
 			if (currentZoomFactor > ZOOM_FACTOR[i]) {
 				factor = i;
@@ -165,7 +150,6 @@ public class SolarSystem extends PApplet {
 		}
 
 		double adjustment = 0.01 * factor;
-
 		if (currentZoomFactor > ZOOM_FACTOR[zoomFactor]) {
 			currentZoomFactor -= adjustment;
 			currentZoomFactor = max(ZOOM_FACTOR[zoomFactor], currentZoomFactor);
@@ -173,6 +157,9 @@ public class SolarSystem extends PApplet {
 			currentZoomFactor += adjustment;
 			currentZoomFactor = min(ZOOM_FACTOR[zoomFactor], currentZoomFactor);
 		}
+
+		setWindow(-1.2 * EARTH_DISTANCE * currentZoomFactor, 1.2 * EARTH_DISTANCE * currentZoomFactor,
+				-1.2 * EARTH_DISTANCE * currentZoomFactor, 1.2 * EARTH_DISTANCE * currentZoomFactor);
 	}
 
 	private void initializeSolarSystem() {
@@ -202,8 +189,7 @@ public class SolarSystem extends PApplet {
 			String image) {
 
 		PVector position = new PVector(0, -distance);
-		PVector positionVector = position.copy();
-		PVector perpendicularVector = new PVector(positionVector.y, -positionVector.x);
+		PVector perpendicularVector = new PVector(position.y, -position.x);
 		perpendicularVector.normalize();
 		PVector velocity = PVector.mult(perpendicularVector, speed);
 
@@ -213,31 +199,20 @@ public class SolarSystem extends PApplet {
 	}
 
 	private void addAsteroidBelt() {
-
-		float baseDistance = DISTANCES[5];
-		float baseSpeed = SPEEDS[5];
-		float baseRadius = RADII[5];
-		float baseMass = MASSES[5];
-
 		for (int i = 0; i < 300; i++) {
-			float newDistance = randomizeValue(baseDistance);
-			float newSpeed = randomizeValue(baseSpeed);
-			float newRadius = randomizeValue(baseRadius);
-			float newMass = randomizeValue(baseMass);
-
-			String asteroidName = NAMES[5] + " " + (i + 1);
+			float newDistance = randomizeValue(DISTANCES[5]);
+			float newSpeed = randomizeValue(SPEEDS[5]);
+			float newRadius = randomizeValue(RADII[5]);
+			float newMass = randomizeValue(MASSES[5]);
 
 			float angle = random(TWO_PI);
-			float x = newDistance * cos(angle);
-			float y = newDistance * sin(angle);
-			PVector position = new PVector(x, y);
+			PVector position = new PVector(newDistance * cos(angle), newDistance * sin(angle));
 
-			PVector positionVector = position.copy();
-			PVector perpendicularVector = new PVector(positionVector.y, -positionVector.x);
+			PVector perpendicularVector = new PVector(position.y, -position.x);
 			perpendicularVector.normalize();
 			PVector velocity = PVector.mult(perpendicularVector, newSpeed);
 
-			CelestialBody celestialBody = new CelestialBody(asteroidName, position, velocity, newMass,
+			CelestialBody celestialBody = new CelestialBody(NAMES[5] + " " + (i + 1), position, velocity, newMass,
 					(float) (newRadius * PLANET_RADIUS_SCALE), color(100, 100, 100), null, this);
 			bodies.add(celestialBody);
 		}
@@ -249,9 +224,8 @@ public class SolarSystem extends PApplet {
 	}
 
 	private void createStars() {
-		stars = new ArrayList<>();
 		for (int i = 0; i < 500; i++) {
-			float randomDistance = random(EARTH_DISTANCE * ZOOM_FACTOR[5] * 1.5f) * 1.05f;
+			float randomDistance = random(EARTH_DISTANCE * ZOOM_FACTOR[5] * 1.5f) * 1.1f;
 
 			float randomAngle = random(TWO_PI);
 
@@ -263,56 +237,42 @@ public class SolarSystem extends PApplet {
 	}
 
 	private void summonAsteroid(int mouseX, int mouseY) {
-		double[] mouseWorldCoords = plt.getWorldCoord(mouseX, mouseY);
-
-		PVector targetPosition = new PVector((float) mouseWorldCoords[0], (float) mouseWorldCoords[1]);
-
 		double[] currentWindow = plt.getWindow();
-
-		double xMin = currentWindow[0];
-		double xMax = currentWindow[1];
-
-		float x0 = random((float) xMin, (float) xMax);
-
+		float x0 = random((float) currentWindow[0], (float) currentWindow[1]);
 		float y0 = (float) currentWindow[3] * 1.05f;
 		PVector startPosition = new PVector(x0, y0);
 
+		double[] mouseWorldCoords = plt.getWorldCoord(mouseX, mouseY);
+		PVector targetPosition = new PVector((float) mouseWorldCoords[0], (float) mouseWorldCoords[1]);
 		PVector direction = PVector.sub(targetPosition, startPosition);
 		final float LAUNCH_SPEED = 5.0e4f;
-
 		direction.normalize();
 		PVector velocity = PVector.mult(direction, LAUNCH_SPEED);
 
-		CelestialBody newParticle = new CelestialBody("", startPosition, velocity, MASSES[5] * 2,
+		CelestialBody newAsteroid = new CelestialBody("", startPosition, velocity, MASSES[5] * 2,
 				(float) (RADII[5] * 2 * PLANET_RADIUS_SCALE), color(100, 100, 100), null, this);
 
-		asteroids.add(newParticle);
+		asteroids.add(newAsteroid);
 	}
 
 	private void createParticle(CelestialBody asteroid, float dt) {
-
-		float particleRadius = asteroid.getRadius() / 4f;
-
-		final float PARTICLE_LIFESPAN = 604800f;
-
+		final float PARTICLE_LIFESPAN = 604800f; // 1 semana;
+		final float LAUNCH_SPEED_FACTOR = 1.0f;
+		final float MAX_ANGLE_RAD = PApplet.PI / 9f;		
+		float particleRadius = asteroid.getRadius() / 1.5f;
+		
 		PVector velocity = asteroid.getVelocity();
-
-		PVector oppositeDirection = PVector.mult(velocity, -1);
-		oppositeDirection.normalize();
+		PVector oppositeDirection = PVector.mult(velocity, -1).normalize();
 		PVector positionOffset = PVector.mult(oppositeDirection, asteroid.getRadius());
 		PVector position = PVector.add(asteroid.getPosition(), positionOffset);
 
-		final float MAX_ANGLE_RAD = PApplet.PI / 9f;
 		float randomAngle = random(-MAX_ANGLE_RAD, MAX_ANGLE_RAD);
-
+		
 		PVector launchDirection = oppositeDirection.copy();
 		launchDirection.rotate(randomAngle);
-
-		final float LAUNCH_SPEED_FACTOR = 1.0f;
+		
 		float launchMagnitude = velocity.mag() * LAUNCH_SPEED_FACTOR;
-
 		PVector launchVelocity = PVector.mult(launchDirection, launchMagnitude);
-
 		PVector finalVelocity = PVector.add(velocity, launchVelocity);
 
 		Particle newParticle = new Particle(position, finalVelocity, particleRadius, color(150, 150, 150),
