@@ -7,11 +7,10 @@ import processing.core.PVector;
 
 public class Arrive extends Behaviour {
 
-	private float potency;
+	private float breakPotency = 40f;
 
-	public Arrive(float weight, float k) {
+	public Arrive(float weight) {
 		super(weight);
-		this.potency = k;
 	}
 
 	@Override
@@ -26,7 +25,7 @@ public class Arrive extends Behaviour {
 		if (distance >= breakingDistance)
 			desiredSpeed = me.getDNA().maxSpeed;
 		else {
-			float speedRatio = (float) Math.pow(distance / breakingDistance, potency);
+			float speedRatio = (float) Math.pow(distance / breakingDistance, breakPotency);
 			desiredSpeed = me.getVelocity().mag() * speedRatio;
 		}
 
@@ -34,5 +33,9 @@ public class Arrive extends Behaviour {
 		desiredVelocity.mult(desiredSpeed);
 
 		return desiredVelocity;
+	}
+	
+	private void setBreakPotency(float breakPotency) {
+		this.breakPotency = breakPotency;
 	}
 }

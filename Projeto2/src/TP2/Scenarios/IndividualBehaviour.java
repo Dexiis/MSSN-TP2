@@ -26,7 +26,6 @@ public class IndividualBehaviour extends PApplet {
 	private Wander wander;
 	private Flee flee;
 
-	private final float POTENCY_FACTOR = 40f;
 	private boolean staticDot = false;
 
 	private static final int SEEK_MODE = 0;
@@ -49,16 +48,15 @@ public class IndividualBehaviour extends PApplet {
 
 		List<Body> targets = new ArrayList<>();
 		targets.add(target);
-
+		targets.add(boidSeeker);
+		boid.setEye(new Eye(boid, targets));
+		
 		List<Body> targets2 = new ArrayList<>();
 		targets2.add(boid);
-
-		boid.setEye(new Eye(boid, targets));
-
 		boidSeeker.setEye(new Eye(boidSeeker, targets2));
 
 		seek = new Seek(1f);
-		arrive = new Arrive(1f, POTENCY_FACTOR);
+		arrive = new Arrive(1f);
 		patrol = new Patrol(1f);
 		wander = new Wander(1f);
 		flee = new Flee(1f);

@@ -301,21 +301,21 @@ public class SolarSystem extends PApplet {
 				speed = max(speed, -2629744 * 6);
 			}
 
-		if (key == 'c')
+		if (key == 'c' || key == 'C')
 			speed = 60;
 
-		if (key == 'v')
+		if (key == 'v' || key == 'V')
 			speed = 86400;
 
-		if (key == 'b')
+		if (key == 'b' || key == 'B')
 			speed = 2629744;
 
-		if (key == 'w') {
+		if (key == 'w' || key == 'W') {
 			zoomFactor--;
 			zoomFactor = max(1, zoomFactor);
 		}
 
-		if (key == 's') {
+		if (key == 's' || key == 'S') {
 			zoomFactor++;
 			zoomFactor = min(NAMES.length - 1, zoomFactor);
 		}

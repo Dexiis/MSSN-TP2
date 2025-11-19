@@ -14,10 +14,8 @@ public class Flee extends Behaviour {
 	@Override
 	public PVector getDesiredVelocity(Boid me) {
 		Body bodyTarget = me.getEye().getTarget();
-		PVector desiredVelocity = me.getToroidalDistanceVector(bodyTarget.getPosition());
-        desiredVelocity.mult(-1).setMag(me.getDNA().maxSpeed);
+		PVector desiredVelocity = me.getToroidalDistanceVector(bodyTarget.getPosition()).mult(-1).setMag(me.getDNA().maxSpeed);
 
 		return desiredVelocity;
 	}
-
 }
