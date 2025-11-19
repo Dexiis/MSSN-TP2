@@ -225,12 +225,8 @@ public class SolarSystem extends PApplet {
 
 	private void createStars() {
 		for (int i = 0; i < 500; i++) {
-			float randomDistance = random(EARTH_DISTANCE * ZOOM_FACTOR[5] * 1.5f) * 1.1f;
-
-			float randomAngle = random(TWO_PI);
-
-			float x = randomDistance * cos(randomAngle);
-			float y = randomDistance * sin(randomAngle);
+			float x = random(-EARTH_DISTANCE * 5 * 1.2f, EARTH_DISTANCE * 5 * 1.2f);
+			float y = random(-EARTH_DISTANCE * 5 * 1.2f, EARTH_DISTANCE * 5 * 1.2f);
 
 			stars.add(new PVector(x, y));
 		}
@@ -258,19 +254,19 @@ public class SolarSystem extends PApplet {
 	private void createParticle(CelestialBody asteroid, float dt) {
 		final float PARTICLE_LIFESPAN = 604800f; // 1 semana;
 		final float LAUNCH_SPEED_FACTOR = 1.0f;
-		final float MAX_ANGLE_RAD = PApplet.PI / 9f;		
+		final float MAX_ANGLE_RAD = PApplet.PI / 9f;
 		float particleRadius = asteroid.getRadius() / 1.5f;
-		
+
 		PVector velocity = asteroid.getVelocity();
 		PVector oppositeDirection = PVector.mult(velocity, -1).normalize();
 		PVector positionOffset = PVector.mult(oppositeDirection, asteroid.getRadius());
 		PVector position = PVector.add(asteroid.getPosition(), positionOffset);
 
 		float randomAngle = random(-MAX_ANGLE_RAD, MAX_ANGLE_RAD);
-		
+
 		PVector launchDirection = oppositeDirection.copy();
 		launchDirection.rotate(randomAngle);
-		
+
 		float launchMagnitude = velocity.mag() * LAUNCH_SPEED_FACTOR;
 		PVector launchVelocity = PVector.mult(launchDirection, launchMagnitude);
 		PVector finalVelocity = PVector.add(velocity, launchVelocity);

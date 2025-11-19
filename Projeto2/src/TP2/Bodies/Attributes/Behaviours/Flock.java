@@ -1,9 +1,8 @@
-package TP2.Bodies.BoidAttributes.Behaviours;
+package TP2.Bodies.Attributes.Behaviours;
 
 import TP2.Bodies.Body;
 import TP2.Bodies.Boid;
-import TP2.Bodies.BoidAttributes.Eye;
-import TP2.Bodies.BoidAttributes.Behaviour;
+import TP2.Bodies.Attributes.Eye;
 import TP2.Core.*;
 
 import processing.core.PApplet;

@@ -1,8 +1,8 @@
-package TP2.Bodies.BoidAttributes.Behaviours;
+package TP2.Bodies.Attributes.Behaviours;
 
 import TP2.Bodies.Body;
 import TP2.Bodies.Boid;
-import TP2.Bodies.BoidAttributes.Behaviour;
+import TP2.Bodies.Attributes.Behaviour;
 import processing.core.PVector;
 
 public class Flee extends Behaviour {
@@ -14,8 +14,8 @@ public class Flee extends Behaviour {
 	@Override
 	public PVector getDesiredVelocity(Boid me) {
 		Body bodyTarget = me.getEye().getTarget();
-		PVector desiredVelocity = me.getToroidalDistanceVector(bodyTarget.getPosition()).mult(-1).setMag(me.getDNA().maxSpeed);
-
-		return desiredVelocity;
+		PVector bodyTargetDistance = me.getToroidalDistanceVector(bodyTarget.getPosition());
+		
+		return bodyTargetDistance.mult(-1);
 	}
 }

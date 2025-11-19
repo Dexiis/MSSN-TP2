@@ -1,7 +1,7 @@
-package TP2.Bodies.BoidAttributes.Behaviours;
+package TP2.Bodies.Attributes.Behaviours;
 
 import TP2.Bodies.Boid;
-import TP2.Bodies.BoidAttributes.Behaviour;
+import TP2.Bodies.Attributes.Behaviour;
 import processing.core.PVector;
 
 public class Wander extends Behaviour {

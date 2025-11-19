@@ -1,23 +1,24 @@
-package TP2.Bodies.BoidAttributes.Behaviours;
+package TP2.Bodies.Attributes.Behaviours;
 
 import TP2.Bodies.Body;
 import TP2.Bodies.Boid;
-import TP2.Bodies.BoidAttributes.Behaviour;
-
+import TP2.Bodies.Attributes.Behaviour;
 import processing.core.PVector;
 
-public class Pursuit extends Behaviour {
+public class Evade extends Behaviour {
 
-	public Pursuit(float weight) {
+	public Evade(float weight) {
 		super(weight);
 	}
 
 	@Override
 	public PVector getDesiredVelocity(Boid me) {
 		Body bodyTarget = me.getEye().getTarget();
+
 		PVector d = bodyTarget.getVelocity().mult(me.getDNA().deltaTPursuit);
 		PVector target = PVector.add(bodyTarget.getPosition(), d);
-		return PVector.sub(target, me.getPosition());
-	}
 
+		PVector vd = me.getToroidalDistanceVector(target);
+		return vd.mult(-1);
+	}
 }

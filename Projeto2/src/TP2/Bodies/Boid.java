@@ -3,7 +3,7 @@ package TP2.Bodies;
 import java.util.ArrayList;
 import java.util.List;
 
-import TP2.Bodies.BoidAttributes.*;
+import TP2.Bodies.Attributes.*;
 import TP2.Core.*;
 
 import processing.core.PApplet;
@@ -21,13 +21,23 @@ public class Boid extends Body {
 	protected float phiWander;
 	private double[] window;
 	private float sumWeights;
-
+	
 	public Boid(PVector pos, float mass, float radius, int color, PApplet p, SubPlot plt) {
 		super(pos, new PVector(), mass, radius, color);
 		setShape(p, plt);
 		dna = new DNA();
 		behaviours = new ArrayList<Behaviour>();
 		window = plt.getWindow();
+
+	}
+
+	public Boid(PVector pos, float mass, float radius, int color, Entity entity, PApplet p, SubPlot plt) {
+		super(pos, new PVector(), mass, radius, color);
+		setShape(p, plt);
+		dna = new DNA(entity);
+		behaviours = new ArrayList<Behaviour>();
+		window = plt.getWindow();
+
 	}
 
 	public void setEye(Eye eye) {
@@ -38,23 +48,21 @@ public class Boid extends Body {
 		return this.eye;
 	}
 
-	public void setVelocity(int n, boolean aux) {
+	public void setVelocity(int increment, boolean aux) {
 		if (aux)
-			dna.maxSpeed += n;
+			dna.maxSpeed += increment;
 		else {
-			dna.maxSpeed -= n;
-			if (dna.maxSpeed < 0)
-				dna.maxSpeed = 0;
+			dna.maxSpeed -= increment;
+			dna.maxSpeed = Math.max(0, dna.maxSpeed);
 		}
 	}
 
-	public void setForce(int n, boolean aux) {
+	public void setForce(int increment, boolean aux) {
 		if (aux)
-			dna.maxForce += n;
+			dna.maxForce += increment;
 		else {
-			dna.maxForce -= n;
-			if (dna.maxForce < 0)
-				dna.maxForce = 0;
+			dna.maxForce -= increment;
+			dna.maxForce = Math.max(0, dna.maxForce);
 		}
 	}
 
@@ -87,6 +95,10 @@ public class Boid extends Body {
 
 	public float getPhiWander() {
 		return phiWander;
+	}
+
+	public float getSumWeights() {
+		return sumWeights;
 	}
 
 	private void updateSumWeights() {

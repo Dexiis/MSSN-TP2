@@ -1,4 +1,4 @@
-package TP2.Bodies.BoidAttributes;
+package TP2.Bodies.Attributes;
 
 public abstract class Behaviour implements IBehaviour {
 

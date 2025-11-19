@@ -1,4 +1,4 @@
-package TP2.Bodies.BoidAttributes;
+package TP2.Bodies.Attributes;
 
 import TP2.Bodies.Boid;
 
