@@ -1,24 +1,38 @@
 package TP2.Bodies.BoidAttributes.Behaviours;
 
+import TP2.Bodies.Body;
 import TP2.Bodies.Boid;
 import TP2.Bodies.BoidAttributes.Behaviour;
-
 import processing.core.PVector;
 
 public class Arrive extends Behaviour {
 
-	public Arrive(float weight) {
+	private float potency;
+
+	public Arrive(float weight, float k) {
 		super(weight);
+		this.potency = k;
 	}
 
 	@Override
 	public PVector getDesiredVelocity(Boid me) {
-		PVector vd = PVector.sub(me.getEye().getTarget().getPosition(), me.getPosition());
-		float distance = vd.mag();
-		float R = me.getDNA().radiusArrive;
-		if (distance < R)
-			vd.mult(distance / R);
-		return vd;
-	}
+		Body bodyTarget = me.getEye().getTarget();
+		PVector direction = PVector.sub(bodyTarget.getPosition(), me.getPosition());
 
+		float distance = direction.mag();
+		float breakingDistance = me.getDNA().radiusArrive;
+		float desiredSpeed;
+
+		if (distance >= breakingDistance)
+			desiredSpeed = me.getDNA().maxSpeed;
+		else {
+			float speedRatio = (float) Math.pow(distance / breakingDistance, potency);
+			desiredSpeed = me.getVelocity().mag() * speedRatio;
+		}
+
+		PVector desiredVelocity = direction.normalize();
+		desiredVelocity.mult(desiredSpeed);
+
+		return desiredVelocity;
+	}
 }

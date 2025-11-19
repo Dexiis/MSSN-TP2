@@ -8,8 +8,8 @@ import TP2.Bodies.BoidAttributes.Behaviours.*;
 import TP2.Core.*;
 import processing.core.PApplet;
 import processing.core.PVector;
-import java.util.ArrayList; // Necessário para criar a lista de corpos para o Eye
-import java.util.List;     // Necessário para a lista de corpos
+import java.util.ArrayList;
+import java.util.List;
 
 public class IndividualBehaviour extends PApplet {
 	private Boid boid;
@@ -18,7 +18,15 @@ public class IndividualBehaviour extends PApplet {
 	private SubPlot plt;
 	private Body target;
 	private float lastUpdateTime;
-	private Seek seek; 
+
+	private Seek seek;
+	private Arrive arrive;
+
+	private final float POTENCY_FACTOR = 20f;
+
+	private static final int SEEK_MODE = 0;
+	private static final int ARRIVE_MODE = 1;
+	private int currentBehaviour = SEEK_MODE;
 
 	public void settings() {
 		size(800, 800);
@@ -29,12 +37,14 @@ public class IndividualBehaviour extends PApplet {
 		plt = new SubPlot(window, viewport, width, height);
 		boid = new Boid(new PVector(), 1f, 0.5f, color(0), this, plt);
 		target = new Target(new PVector(), new PVector(), 0.2f, color(255, 0, 0));
-		
+
 		List<Body> targets = new ArrayList<>();
 		targets.add(target);
 		boid.setEye(new Eye(boid, targets));
-		
-		seek = new Seek(1f); 
+
+		seek = new Seek(1f);
+		arrive = new Arrive(1f, POTENCY_FACTOR);
+
 		boid.addBehaviour(seek);
 	}
 
@@ -44,22 +54,45 @@ public class IndividualBehaviour extends PApplet {
 		lastUpdateTime = now;
 
 		background(255);
-		
-		boid.applyBehaviours(dt); 
-		
+
+		boid.applyBehaviours(dt);
+
 		boid.display(this, plt);
 		target.display(this, plt);
+
+		pushStyle();
+
+		fill(0);
+		textSize(16);
+
+		String behaviourName = (currentBehaviour == SEEK_MODE) ? "Seek (Perseguir)" : "Arrive (Aproximar)";
+		text("Comportamento Atual (C): " + behaviourName, 10, 20);
+		text("Controlo: 'W' (Acelerar) | 'S' (Travar)", 10, 40);
+		text("Mudar Comportamento: 'C'", 10, 60);
+
+		popStyle();
 	}
 
 	public void keyPressed() {
 		int increment = 1;
-		
-		if(key == 'w') {
+
+		if (key == 'w' || key == 'W') {
 			boid.setVelocity(increment, true);
 			boid.setForce(increment, true);
-		} else if (key == 's') {
+		} else if (key == 's' || key == 'S') {
 			boid.setVelocity(increment, false);
 			boid.setForce(increment, false);
+		} else if (key == 'c' || key == 'C') {
+			boid.removeBehaviour(seek);
+			boid.removeBehaviour(arrive);
+
+			if (currentBehaviour == SEEK_MODE) {
+				currentBehaviour = ARRIVE_MODE;
+				boid.addBehaviour(arrive);
+			} else {
+				currentBehaviour = SEEK_MODE;
+				boid.addBehaviour(seek);
+			}
 		}
 	}
 
