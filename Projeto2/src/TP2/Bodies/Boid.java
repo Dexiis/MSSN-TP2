@@ -16,6 +16,7 @@ public class Boid extends Body {
 	private PShape shape;
 	protected DNA dna;
 	protected Eye eye;
+	
 	private List<Behaviour> behaviours;
 	protected float phiWander;
 	private double[] window;
@@ -32,37 +33,35 @@ public class Boid extends Body {
 	public void setEye(Eye eye) {
 		this.eye = eye;
 	}
-	
+
 	public Eye getEye() {
 		return this.eye;
 	}
-	
+
 	public void setVelocity(int n, boolean aux) {
-		if(aux) {
+		if (aux)
 			dna.maxSpeed += n;
-		}else {
+		else {
 			dna.maxSpeed -= n;
-			if(dna.maxSpeed<0) {
+			if (dna.maxSpeed < 0)
 				dna.maxSpeed = 0;
-			}
 		}
 	}
-	
+
 	public void setForce(int n, boolean aux) {
-		if(aux) {
+		if (aux)
 			dna.maxForce += n;
-		}else {
+		else {
 			dna.maxForce -= n;
-			if(dna.maxForce<0) {
+			if (dna.maxForce < 0)
 				dna.maxForce = 0;
-			}
 		}
 	}
-	
+
 	public void setShape(PApplet p, SubPlot plt, float radius, int color) {
 		this.radius = radius;
 		this.color = color;
-		setShape(p,plt);
+		setShape(p, plt);
 	}
 
 	public void setShape(PApplet p, SubPlot plt) {
@@ -77,20 +76,19 @@ public class Boid extends Body {
 		shape.vertex(-rr[0] / 2, 0);
 		shape.endShape(PConstants.CLOSE);
 	}
-	
+
 	public DNA getDNA() {
 		return dna;
 	}
-	
+
 	public float getPhiWander() {
 		return phiWander;
 	}
-	
+
 	private void updateSumWeights() {
 		sumWeights = 0;
-		for(Behaviour beh : behaviours) {
+		for (Behaviour beh : behaviours)
 			sumWeights += beh.getWeight();
-		}
 	}
 
 	public void addBehaviour(Behaviour behaviour) {
@@ -99,25 +97,26 @@ public class Boid extends Body {
 	}
 
 	public void removeBehaviour(Behaviour behaviour) {
-		if (behaviours.contains(behaviour)) {
+		if (behaviours.contains(behaviour))
 			behaviours.remove(behaviour);
-		}
 		updateSumWeights();
 	}
 
 	public void applyBehaviour(int i, float dt) {
-		if(eye!= null) eye.look();
+		if (eye != null)
+			eye.look();
 		Behaviour behaviour = behaviours.get(i);
 		PVector vd = behaviour.getDesiredVelocity(this);
 		move(dt, vd);
 	}
 
 	public void applyBehaviours(float dt) {
-		if(eye!= null) eye.look();
+		if (eye != null)
+			eye.look();
 		PVector vd = new PVector();
 		for (Behaviour behaviour : behaviours) {
 			PVector vdd = behaviour.getDesiredVelocity(this);
-			vdd.mult(behaviour.getWeight()/sumWeights);
+			vdd.mult(behaviour.getWeight() / sumWeights);
 			vd.add(vdd);
 		}
 		move(dt, vd);
@@ -129,19 +128,14 @@ public class Boid extends Body {
 		applyForce(fs.limit(dna.maxForce));
 		super.move(dt);
 
-		if (position.x < window[0]) {
+		if (position.x < window[0])
 			position.x += window[1] - window[0];
-		}
-		if (position.y < window[2]) {
+		if (position.y < window[2])
 			position.y += window[3] - window[2];
-		}
-		if (position.x >= window[1]) {
+		if (position.x >= window[1])
 			position.x -= window[1] - window[0];
-		}
-		if (position.y >= window[3]) {
+		if (position.y >= window[3])
 			position.y -= window[3] - window[2];
-		}
-		
 	}
 
 	@Override
@@ -151,7 +145,7 @@ public class Boid extends Body {
 		float[] vv = plt.getVectorCoord(velocity.x, velocity.y);
 		PVector vaux = new PVector(vv[0], vv[1]);
 		p.translate(pp[0], pp[1]);
-		p.rotate(-vaux.heading()); 
+		p.rotate(-vaux.heading());
 		p.shape(shape);
 		p.popMatrix();
 	}

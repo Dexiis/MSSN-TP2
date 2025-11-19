@@ -30,11 +30,9 @@ public class CelestialBody extends Body {
 	@Override
 	public void display(PApplet p, SubPlot plt) {
 		p.pushStyle();
-
+		
 		positions = plt.getPixelCoord(position.x, position.y);
-
 		float[] r = plt.getVectorCoord(radius, radius);
-
 		if (image != null) {
 			p.imageMode(p.CENTER);
 			p.image(this.image, positions[0], positions[1], 2 * r[0], 2 * r[0]);

@@ -16,7 +16,6 @@ public class SolarSystem extends PApplet {
 	private ArrayList<CelestialBody> bodies;
 	private ArrayList<CelestialBody> asteroids;
 	private ArrayList<Particle> particles;
-	private ArrayList<Particle> deadParticles;
 	private ArrayList<PVector> stars;
 
 	private static final float EARTH_DISTANCE = 1.496e11f;
@@ -60,10 +59,9 @@ public class SolarSystem extends PApplet {
 		bodies = new ArrayList<>();
 		asteroids = new ArrayList<>();
 		particles = new ArrayList<>();
-		deadParticles = new ArrayList<>();
 		initializeSolarSystem();
+		
 		background(0);
-
 		textSize(16);
 		textAlign(LEFT, TOP);
 		fill(255);
@@ -128,21 +126,21 @@ public class SolarSystem extends PApplet {
 		timer += speed * dt;
 		Iterator<CelestialBody> itenerator2 = asteroids.iterator();
 		while (itenerator2.hasNext()) {
-		    CelestialBody asteroid = itenerator2.next();
+			CelestialBody asteroid = itenerator2.next();
 
-		    asteroid.move(speed * dt);
-		    asteroid.display(this, plt);
+			asteroid.move(speed * dt);
+			asteroid.display(this, plt);
 
-		    if (timer > 5)
-		        createParticle(asteroid, dt);
+			if (timer > 5)
+				createParticle(asteroid, dt);
 
-		    float distance = PVector.dist(sun.getPosition(), asteroid.getPosition());
-		    if (distance > EARTH_DISTANCE * 8)
-		        itenerator2.remove();
-		   
-		    else if (distance < sun.getRadius() + asteroid.getRadius()) 
-		        itenerator2.remove();
-		    
+			float distance = PVector.dist(sun.getPosition(), asteroid.getPosition());
+			if (distance > EARTH_DISTANCE * 8)
+				itenerator2.remove();
+
+			else if (distance < sun.getRadius() + asteroid.getRadius())
+				itenerator2.remove();
+
 		}
 		if (timer > 126) // 10 a cada dia
 			timer = 0;

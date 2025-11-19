@@ -16,7 +16,7 @@ public class Body extends Movement {
 		this.color = color;
 		this.radius = radius;
 	}
-	
+
 	public float getRadius() {
 		return radius;
 	}
