@@ -48,11 +48,13 @@ public class NormandyLanding extends PApplet {
 
 		for (Soldier soldier : soldiers) {
 			PVector weightForce = new PVector(0, soldier.getMass() * g * gravityIncrement); // P = mg
-			if (soldier.getPosition().y <= 0) {
+			if (soldier.isGrounded()) {
 				/* Grounded */
 				
 			} else {
 				/* Not grounded */
+				
+				// TODO: Add wall collisions
 				
 				PVector dragForce = air.drag(soldier);
 				
@@ -71,7 +73,7 @@ public class NormandyLanding extends PApplet {
 
 	private void generateSoldiers() {
 		for(int i = 0; i < SOLDIER_NUMBER; i++) {
-			Soldier soldier = new Soldier(new PVector(random(0, width), 600), new PVector(0, 0), random(65, 85), random(2, 4), color(0, 0, 0));
+			Soldier soldier = new Soldier(new PVector(random(0, width), 600), new PVector(0, 0), random(65, 85), random(2, 4), color(0, 0, 0), this);
 			soldier.setParachuteHeight((int) random(200, 250));
 			soldiers.add(soldier);
 		}
