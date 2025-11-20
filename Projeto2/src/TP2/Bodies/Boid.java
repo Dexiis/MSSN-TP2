@@ -118,6 +118,10 @@ public class Boid extends Body {
 			behaviours.remove(behaviour);
 		updateSumWeights();
 	}
+	
+	public List<Behaviour> getBehaviours(){
+		return behaviours;
+	}
 
 	public void clearBehaviour() {
 		behaviours.clear();

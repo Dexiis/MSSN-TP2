@@ -26,7 +26,7 @@ public class Flocking extends PApplet {
 	private Align align;
 	private Cohesion cohesion;
 	private Separate separate;
-	private Pursuit pursuit;
+	private Seek seek;
 	private Wander wander;
 
 	private double[] window = { -20f, 20f, -20f, 20f };
@@ -87,9 +87,9 @@ public class Flocking extends PApplet {
 			// comportamentos.
 		}
 
-		pursuit = new Pursuit(1.0f);
+		seek = new Seek(1.0f);
 		wander = new Wander(1.0f);
-		predator.addBehaviour(pursuit);
+		predator.addBehaviour(seek);
 		predator.addBehaviour(wander);
 
 	}
@@ -106,11 +106,14 @@ public class Flocking extends PApplet {
 		predator.clearBehaviour();
 		predator.getEye().display(this, plt);
 
-		if (predator.getEye().getTargets().size() > 0) {
-			predator.addBehaviour(pursuit);
+		if (predator.getEye().getFarSight().size() > 0) {
+			predator.getEye().setTarget(predator.getEye().getFarSight().get(0));
+			predator.addBehaviour(seek);
+			
 		} else {
 			predator.addBehaviour(wander);
 		}
+		
 		for (int i = preyFlock.size() - 1; i >= 0; i--) {
 			Boid prey = (Boid) preyFlock.get(i);
 
@@ -129,6 +132,7 @@ public class Flocking extends PApplet {
 			if (distance.mag() < (prey.getRadius() + predator.getRadius()) / 2) {
 				preyFlock.remove(prey);
 				allBodies.remove(prey);
+				predator.getEye().setTargets(preyFlock);
 			}
 
 		}
@@ -141,6 +145,8 @@ public class Flocking extends PApplet {
 		for (Body body : allBodies) {
 			body.display(this, plt);
 		}
+		
+		System.out.println(predator.getBehaviours());
 
 	}
 }
