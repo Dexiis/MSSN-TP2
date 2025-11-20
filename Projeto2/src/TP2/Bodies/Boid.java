@@ -103,8 +103,9 @@ public class Boid extends Body {
 
 	private void updateSumWeights() {
 		sumWeights = 0;
-		for (Behaviour beh : behaviours)
-			sumWeights += beh.getWeight();
+		for (Behaviour behaviour : behaviours)
+			if(behaviour != null)
+				sumWeights += behaviour.getWeight();
 	}
 
 	public void addBehaviour(Behaviour behaviour) {

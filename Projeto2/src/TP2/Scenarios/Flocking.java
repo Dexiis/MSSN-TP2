@@ -22,6 +22,12 @@ public class Flocking extends PApplet {
 	private List<Body> allBodies;
 	private List<Body> preyFlock;
 	private Predator predator;
+	private Evade evade;
+	private Align align;
+	private Cohesion cohesion;
+	private Separate separate;
+	private Pursuit pursuit;
+	private Wander wander;
 
 	private double[] window = { -20f, 20f, -20f, 20f };
 	private float[] viewport = { 0f, 0f, 1f, 1f };
@@ -39,12 +45,11 @@ public class Flocking extends PApplet {
 		preyFlock = new ArrayList<Body>();
 		lastUpdateTime = millis();
 
-
 		for (int i = 0; i < NB_PREY; i++) {
 			float x = random((float) window[0], (float) window[1]);
 			float y = random((float) window[2], (float) window[3]);
-			
-			Prey prey = new Prey(new PVector(x, y), 1f, 0.4f, color(0, 0, 255), this, plt); 
+
+			Prey prey = new Prey(new PVector(x, y), 1f, 0.4f, color(0, 0, 255), this, plt);
 			preyFlock.add(prey);
 			allBodies.add(prey);
 		}
@@ -52,36 +57,40 @@ public class Flocking extends PApplet {
 		float x = random((float) window[0], (float) window[1]);
 		float y = random((float) window[2], (float) window[3]);
 		PVector pos = new PVector(x, y);
-		
+
 		predator = new Predator(pos, 2f, 0.8f, color(255, 0, 0), this, plt, preyFlock);
 		allBodies.add(predator);
 
-		Behaviour align = new Align(1.0f);
-		Behaviour cohesion = new Cohesion(1.0f);
-		
-		Behaviour evade = new Evade(4.0f); 
+		align = new Align(1.0f);
+		cohesion = new Cohesion(1.0f);
+		separate = new Separate(1.0f);
+		evade = new Evade(9.0f);
 
 		for (Body body : preyFlock) {
 			Boid prey = (Boid) body;
-			
+
 			prey.setEye(new Eye(prey, allBodies));
-			
+
 			prey.addBehaviour(align);
 			prey.addBehaviour(cohesion);
-			prey.addBehaviour(evade);
-			
-			// NOTA: Para que o Evade funcione, a Prey precisa de ter o Predador como 'Target'.
+			prey.addBehaviour(separate);
+
+			// NOTA: Para que o Evade funcione, a Prey precisa de ter o Predador como
+			// 'Target'.
 			// E o 'allTrackingBodies' do olho da Prey precisa de ser o bando.
-			// A forma mais simples é fazer com que o Evade utilize o Predador como Target, 
+			// A forma mais simples é fazer com que o Evade utilize o Predador como Target,
 			// e o Align/Cohesion usem os outros Boids.
 
 			// Uma implementação mais robusta de Evade faria com que a presa procurasse
 			// o predador na sua lista de 'farSight' e o definisse como 'target' se o visse.
-			// Para os fins desta refatoração, vamos focar-nos na atribuição de comportamentos.
+			// Para os fins desta refatoração, vamos focar-nos na atribuição de
+			// comportamentos.
 		}
 
-		Behaviour pursuit = new Pursuit(3.0f); 
+		pursuit = new Pursuit(1.0f);
+		wander = new Wander(1.0f);
 		predator.addBehaviour(pursuit);
+		predator.addBehaviour(wander);
 
 	}
 
@@ -94,14 +103,36 @@ public class Flocking extends PApplet {
 		background(200);
 
 		predator.getEye().look();
+		predator.clearBehaviour();
+		predator.getEye().display(this, plt);
 
-		for (Body body : preyFlock) {
-			Boid prey = (Boid) body;
-			
-			prey.getEye().setTarget(predator);
-			prey.getEye().look();
+		if (predator.getEye().getTargets().size() > 0) {
+			predator.addBehaviour(pursuit);
+		} else {
+			predator.addBehaviour(wander);
 		}
-		
+		for (int i = preyFlock.size() - 1; i >= 0; i--) {
+			Boid prey = (Boid) preyFlock.get(i);
+
+			prey.getEye().look();
+
+			prey.clearBehaviour();
+			if (prey.getEye().getTarget() == predator) {
+				prey.addBehaviour(evade);
+			}
+			prey.addBehaviour(align);
+			prey.addBehaviour(cohesion);
+			prey.addBehaviour(separate);
+
+			PVector distance = prey.getToroidalDistanceVector(predator.getPosition());
+
+			if (distance.mag() < (prey.getRadius() + predator.getRadius()) / 2) {
+				preyFlock.remove(prey);
+				allBodies.remove(prey);
+			}
+
+		}
+
 		for (Body body : allBodies) {
 			Boid boid = (Boid) body;
 			boid.applyBehaviours(dt);

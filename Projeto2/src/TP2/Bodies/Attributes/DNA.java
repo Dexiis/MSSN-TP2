@@ -17,7 +17,7 @@ public class DNA {
 
 	public DNA(Entity entity) {
 		if (entity == Entity.PREDATOR) {
-			maxSpeed = random(2f, 4f);
+			maxSpeed = random(6f, 10f);
 			maxForce = random(5f, 8f);
 
 			visionDistance = random(4f, 8f);
@@ -33,7 +33,7 @@ public class DNA {
 
 			deltaPhiWander = (float) Math.PI / 8;
 		} else {
-			maxSpeed = random(1f, 3f);
+			maxSpeed = random(4f, 7f);
 			maxForce = random(4f, 7f);
 
 			visionDistance = random(2f, 5f);
@@ -52,7 +52,7 @@ public class DNA {
 	}
 
 	public DNA() {
-		maxSpeed = random(1f, 3f);
+		maxSpeed = random(4f, 7f);
 		maxForce = random(4f, 7f);
 
 		visionDistance = random(1.5f, 3f);

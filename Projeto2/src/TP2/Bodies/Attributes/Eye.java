@@ -33,6 +33,10 @@ public class Eye {
 	public Body getTarget() {
 		return target;
 	}
+	
+	public List<Body> getTargets() {
+		return allTrackingBodies;
+	}
 
 	public void setTargets(List<Body> allTrackingBodies) {
 		this.allTrackingBodies = allTrackingBodies;

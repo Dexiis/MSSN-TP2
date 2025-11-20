@@ -23,10 +23,10 @@ public class Patrol extends Behaviour {
 
 	private void defineDefaultPath() {
 		this.path = new ArrayList<>();
-		path.add(new PVector(8f, -8f));
-		path.add(new PVector(-8f, -8f));
-		path.add(new PVector(-8f, 8f));
-		path.add(new PVector(8f, 8f));
+		path.add(new PVector(6f, -6f));
+		path.add(new PVector(-6f, -6f));
+		path.add(new PVector(-6f, 6f));
+		path.add(new PVector(6f, 6f));
 		
 	}
 

@@ -80,7 +80,6 @@ public class IndividualBehaviour extends PApplet {
 		background(255);
 
 		boid.getEye().display(this, plt);
-		boidPursuer.getEye().display(this, plt);
 		
 		boid.applyBehaviours(dt);
 		boidPursuer.applyBehaviours(dt);
@@ -104,6 +103,7 @@ public class IndividualBehaviour extends PApplet {
 			boid.addBehaviour(wander);
 			boid.addBehaviour(evade);
 			boidPursuer.display(this, plt);
+			boidPursuer.getEye().display(this, plt);
 		} else {
 			if (!staticDot) {
 				double[] ww = plt.getWorldCoord(mouseX, mouseY);
