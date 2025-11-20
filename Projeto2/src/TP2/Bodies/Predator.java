@@ -13,5 +13,9 @@ public class Predator extends Boid {
 		super(pos, mass, radius, color, Entity.PREDATOR, p, plt);
 		setEye(new Eye(this, allTrackingBodies));
 	}
+	
+	public Predator(PVector pos, float mass, float radius, int color, PApplet p, SubPlot plt) {
+		super(pos, mass, radius, color, Entity.PREDATOR, p, plt);
+	}
 
 }

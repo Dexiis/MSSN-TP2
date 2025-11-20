@@ -2,6 +2,8 @@ package TP2.Scenarios;
 
 import TP2.Bodies.Body;
 import TP2.Bodies.Boid;
+import TP2.Bodies.Predator;
+import TP2.Bodies.Prey;
 import TP2.Bodies.Target;
 import TP2.Bodies.Attributes.*;
 import TP2.Bodies.Attributes.Behaviours.*;
@@ -12,7 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IndividualBehaviour extends PApplet {
-	private Boid boid, boidPursuer;
+	private Prey boid;
+	private Predator boidPursuer;
 	private double[] window = { -10f, 10f, -10f, 10f };
 	private float[] viewport = { 0f, 0f, 1f, 1f };
 	private SubPlot plt;
@@ -44,8 +47,8 @@ public class IndividualBehaviour extends PApplet {
 	public void setup() {
 		lastUpdateTime = millis();
 		plt = new SubPlot(window, viewport, width, height);
-		boid = new Boid(new PVector(), 1f, 0.5f, color(0), this, plt);
-		boidPursuer = new Boid(new PVector(), 1f, 0.5f, color(255, 0, 0), this, plt);
+		boid = new Prey(new PVector(), 1f, 0.5f, color(0), this, plt);
+		boidPursuer = new Predator(new PVector(), 1f, 0.5f, color(255, 0, 0), this, plt);
 		target = new Target(new PVector(), new PVector(), 0.2f, color(255, 0, 0));
 
 		List<Body> targets = new ArrayList<>();
@@ -92,7 +95,7 @@ public class IndividualBehaviour extends PApplet {
 			if (distance >= SAFE_DISTANCE) {
 				evadeWeight = 0f;
 			} else {
-				evadeWeight = (float) Math.pow(1 - (distance / SAFE_DISTANCE), 3);
+				evadeWeight = 5*30 - (float) Math.pow((distance / SAFE_DISTANCE), 3);
 			}
 
 			evade.setWeight(evadeWeight);
@@ -136,7 +139,7 @@ public class IndividualBehaviour extends PApplet {
 	}
 
 	public void keyPressed() {
-		int increment = 1;
+		int increment = 5;
 
 		if (key == 'w' || key == 'W') {
 			boid.setVelocity(increment, true);

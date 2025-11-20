@@ -16,7 +16,23 @@ public class DNA {
 	public float deltaPhiWander;
 
 	public DNA(Entity entity) {
-		if (entity == Entity.PREY) {
+		if (entity == Entity.PREDATOR) {
+			maxSpeed = random(2f, 4f);
+			maxForce = random(5f, 8f);
+
+			visionDistance = random(4f, 8f);
+			visionSafeDistance = 0.25f * visionDistance;
+			visionAngle = (float) Math.PI * 0.2f;
+
+			deltaTPursuit = random(0.5f, 1f);
+
+			radiusArrive = random(5, 10);
+
+			deltaTWander = random(.3f, .6f);
+			radiusWander = random(2f, 3f);
+
+			deltaPhiWander = (float) Math.PI / 8;
+		} else {
 			maxSpeed = random(1f, 3f);
 			maxForce = random(4f, 7f);
 
@@ -30,23 +46,6 @@ public class DNA {
 
 			deltaTWander = random(.3f, .6f);
 			radiusWander = random(1f, 5f);
-
-			deltaPhiWander = (float) Math.PI / 8;
-			
-		} else if (entity == Entity.PREDATOR) {
-			maxSpeed = random(2f, 4f);
-			maxForce = random(5f, 8f);
-
-			visionDistance = random(4f, 8f);
-			visionSafeDistance = 0.75f * visionDistance;
-			visionAngle = (float) Math.PI * 0.2f;
-
-			deltaTPursuit = random(0.5f, 1f);
-
-			radiusArrive = random(5, 10);
-
-			deltaTWander = random(.3f, .6f);
-			radiusWander = random(2f, 3f);
 
 			deltaPhiWander = (float) Math.PI / 8;
 		}
