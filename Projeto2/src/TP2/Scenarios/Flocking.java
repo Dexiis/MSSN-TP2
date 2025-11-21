@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import TP2.Bodies.Boid;
+import TP2.Bodies.Particle;
 import TP2.Bodies.Predator;
 import TP2.Bodies.Prey;
 import TP2.Bodies.Attributes.*;
@@ -18,10 +19,12 @@ public class Flocking extends PApplet {
 
 	private final int NB_PREY = 50;
 	private float lastUpdateTime;
+	private boolean playerIsDead = false;
 
 	private List<Body> allBodies;
 	private List<Body> preyFlock;
 	private Predator predator;
+	private Prey player;
 	private Flee flee;
 	private Flee evade;
 	private Align align;
@@ -31,6 +34,7 @@ public class Flocking extends PApplet {
 	private Wander wander;
 	private List<Behaviour> preyBehaviours = new ArrayList<Behaviour>();
 	private List<Behaviour> predatorBehaviours = new ArrayList<Behaviour>();
+	private List<Particle> particles = new ArrayList<Particle>();
 
 	private double[] window = { -10f, 10f, -10f, 10f };
 	private float[] viewport = { 0f, 0f, 1f, 1f };
@@ -61,13 +65,16 @@ public class Flocking extends PApplet {
 		float y = random((float) window[2], (float) window[3]);
 		PVector pos = new PVector(x, y);
 
+		player = new Prey(new PVector(x, y), 1f, 0.4f, color(0, 255, 0), this, plt);
 		predator = new Predator(pos, 2f, 0.8f, color(255, 0, 0), this, plt, preyFlock);
+		predator.getEye().addTarget(player);
 		allBodies.add(predator);
 
 		for (Body body : preyFlock) {
 			Boid prey = (Boid) body;
 			prey.setEye(new Eye(prey, allBodies));
 			prey.getEye().setTarget(predator);
+			prey.getEye().addTarget(player);
 		}
 
 		align = new Align(1.0f);
@@ -79,7 +86,7 @@ public class Flocking extends PApplet {
 
 		flee = new Flee(9.0f);
 		evade = new Flee(6.0f);
-		
+
 		seek = new Seek(0.8f);
 		wander = new Wander(0.2f);
 		predatorBehaviours.add(seek);
@@ -151,17 +158,29 @@ public class Flocking extends PApplet {
 			if (distance.mag() < (prey.getRadius() + predator.getRadius()) / 2) {
 				preyFlock.remove(prey);
 				allBodies.remove(prey);
+				deathAnimation(prey.getPosition());
 				predator.getEye().setTargets(preyFlock);
+				if (prey == player)
+					playerIsDead = true;
+				if (!playerIsDead)
+					predator.getEye().setTarget(player);
 			}
 
 		}
 
-		for (Body body : allBodies) {
-			Boid prey = (Boid) body;
+		for (Body body : allBodies)
 			body.display(this, plt);
-			//prey.getEye().display(this, plt);
-		}
+		
 		predator.getEye().display(this, plt);
+		for (int i = particles.size() - 1; i >= 0; i--) {
+			Particle particle = particles.get(i);
+			particle.display(this, plt);
+			particle.move(dt);
+			if (particle.isDead())
+				particles.remove(particle);
+		}
+		
+		if (!playerIsDead) player.display(this, plt);
 
 		if (predator.getEye().getTarget() != null) {
 			PVector targetPos = predator.getEye().getTarget().getPosition();
@@ -170,6 +189,22 @@ public class Flocking extends PApplet {
 			stroke(255, 0, 0);
 			strokeWeight(3);
 			ellipse(pp[0], pp[1], 10, 10);
+		}
+	}
+
+	private void deathAnimation(PVector position) {
+		final float PARTICLE_LIFESPAN = 5f;
+		final int NUM_PARTICLES = 20;
+
+		for (int i = 0; i < NUM_PARTICLES; i++) {
+			PVector vel = PVector.random2D();
+			vel.mult(random(0.1f, 1.5f));
+			int particleColor = color(random(200, 255), 0, 0, 200);
+			float lifespan = random(0.5f, PARTICLE_LIFESPAN);
+			float radius = 0.1f;
+
+			Particle particle = new Particle(position.copy(), vel, radius, particleColor, lifespan);
+			particles.add(particle);
 		}
 	}
 }

@@ -45,6 +45,10 @@ public class Eye {
 	public void setTarget(Body target) {
 		this.target = target;
 	}
+	
+	public void addTarget(Body target) {
+		this.allTrackingBodies.add(target);
+	}
 
 	public void look() {
 		farSight = new ArrayList<Body>();
