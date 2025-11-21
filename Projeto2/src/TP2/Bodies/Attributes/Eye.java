@@ -11,8 +11,8 @@ import processing.core.PVector;
 
 public class Eye {
 	private List<Body> allTrackingBodies = new ArrayList<>();
-	private List<Body> farSight;
-	private List<Body> nearSight;
+	private List<Body> farSight = new ArrayList<>();;
+	private List<Body> nearSight = new ArrayList<>();
 	private Boid me;
 	protected Body target;
 
@@ -33,7 +33,7 @@ public class Eye {
 	public Body getTarget() {
 		return target;
 	}
-	
+
 	public List<Body> getTargets() {
 		return allTrackingBodies;
 	}
@@ -41,11 +41,9 @@ public class Eye {
 	public void setTargets(List<Body> allTrackingBodies) {
 		this.allTrackingBodies = allTrackingBodies;
 	}
-	
+
 	public void setTarget(Body target) {
 		this.target = target;
-		this.allTrackingBodies = new ArrayList<>();
-		this.allTrackingBodies.add(target);
 	}
 
 	public void look() {
@@ -60,10 +58,10 @@ public class Eye {
 	}
 
 	private boolean inSight(PVector t, float maxDistance, float maxAngle) {
-		PVector r = PVector.sub(t, me.getPosition());
+		PVector r = me.getToroidalDistanceVector(t);
 		float d = r.mag();
 		float angle = PVector.angleBetween(r, me.getVelocity());
-		return ((d > 0) && (d < maxDistance) && (angle < maxDistance));
+		return ((d > 0) && (d < maxDistance) && (angle < maxAngle));
 	}
 
 	private boolean farSight(PVector t) {
@@ -71,7 +69,7 @@ public class Eye {
 	}
 
 	private boolean nearSight(PVector t) {
-		return inSight(t, me.getDNA().visionSafeDistance, (float) Math.PI);
+		return inSight(t, me.getDNA().visionNearDistance, me.getDNA().visionNearAngle);
 	}
 
 	public void display(PApplet p, SubPlot plt) {
@@ -87,7 +85,6 @@ public class Eye {
 		p.strokeWeight(3);
 
 		float[] dd1 = plt.getDimInPixel(me.getDNA().visionDistance, me.getDNA().visionDistance);
-		float[] dd2 = plt.getDimInPixel(me.getDNA().visionSafeDistance, me.getDNA().visionSafeDistance);
 		p.rotate(me.getDNA().visionAngle);
 		p.line(0, 0, dd1[0], 0);
 		p.rotate(-2 * me.getDNA().visionAngle);
@@ -95,9 +92,18 @@ public class Eye {
 		p.rotate(me.getDNA().visionAngle);
 		p.arc(0, 0, 2 * dd1[0], 2 * dd1[0], -me.getDNA().visionAngle, me.getDNA().visionAngle);
 
+		float[] dd2 = plt.getDimInPixel(me.getDNA().visionNearDistance, me.getDNA().visionNearDistance);
 		p.stroke(255, 0, 255);
-		p.circle(0, 0, 2 * dd2[0]);
-
+		if (me.getDNA().visionNearAngle >= Math.PI) {
+			p.circle(0, 0, 2 * dd2[0]);
+		} else {
+			p.rotate(me.getDNA().visionNearAngle);
+			p.line(0, 0, dd2[0], 0);
+			p.rotate(-2 * me.getDNA().visionNearAngle);
+			p.line(0, 0, dd2[0], 0);
+			p.rotate(me.getDNA().visionNearAngle);
+			p.arc(0, 0, 2 * dd2[0], 2 * dd2[0], -me.getDNA().visionNearAngle, me.getDNA().visionNearAngle);
+		}
 		p.popMatrix();
 		p.popStyle();
 	}

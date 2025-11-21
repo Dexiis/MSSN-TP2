@@ -15,11 +15,12 @@ public class Arrive extends Behaviour {
 
 	@Override
 	public PVector getDesiredVelocity(Boid me) {
+		float desiredSpeed;
+		
 		Body bodyTarget = me.getEye().getTarget();
 		PVector direction = me.getToroidalDistanceVector(bodyTarget.getPosition());
 		float distance = direction.mag();
 		float breakingDistance = me.getDNA().radiusArrive;
-		float desiredSpeed;
 		
 		if (distance >= breakingDistance)
 			desiredSpeed = me.getDNA().maxSpeed;
@@ -32,11 +33,5 @@ public class Arrive extends Behaviour {
 		desiredVelocity.mult(desiredSpeed);
 
 		return desiredVelocity;
-	}
-	
-	@SuppressWarnings("unused")
-	private void setBreakPotency(float breakPotency) {
-		this.breakPotency = breakPotency;
-		// Inacabado
 	}
 }

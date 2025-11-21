@@ -23,13 +23,16 @@ public class Flocking extends PApplet {
 	private List<Body> preyFlock;
 	private Predator predator;
 	private Evade evade;
+	private Flee flee;
 	private Align align;
 	private Cohesion cohesion;
 	private Separate separate;
 	private Seek seek;
 	private Wander wander;
+	private Pursuit pursuit;
+	private List<Behaviour> preyBehaviours = new ArrayList<Behaviour>();
 
-	private double[] window = { -20f, 20f, -20f, 20f };
+	private double[] window = { -10f, 10f, -10f, 10f };
 	private float[] viewport = { 0f, 0f, 1f, 1f };
 	private SubPlot plt;
 
@@ -61,37 +64,25 @@ public class Flocking extends PApplet {
 		predator = new Predator(pos, 2f, 0.8f, color(255, 0, 0), this, plt, preyFlock);
 		allBodies.add(predator);
 
+		for (Body body : preyFlock) {
+			Boid prey = (Boid) body;
+			prey.setEye(new Eye(prey, allBodies));
+			prey.getEye().setTarget(predator);
+		}
+
 		align = new Align(1.0f);
 		cohesion = new Cohesion(1.0f);
 		separate = new Separate(1.0f);
-		evade = new Evade(9.0f);
+		preyBehaviours.add(align);
+		preyBehaviours.add(cohesion);
+		preyBehaviours.add(separate);
 
-		for (Body body : preyFlock) {
-			Boid prey = (Boid) body;
-
-			prey.setEye(new Eye(prey, allBodies));
-
-			prey.addBehaviour(align);
-			prey.addBehaviour(cohesion);
-			prey.addBehaviour(separate);
-
-			// NOTA: Para que o Evade funcione, a Prey precisa de ter o Predador como
-			// 'Target'.
-			// E o 'allTrackingBodies' do olho da Prey precisa de ser o bando.
-			// A forma mais simples é fazer com que o Evade utilize o Predador como Target,
-			// e o Align/Cohesion usem os outros Boids.
-
-			// Uma implementação mais robusta de Evade faria com que a presa procurasse
-			// o predador na sua lista de 'farSight' e o definisse como 'target' se o visse.
-			// Para os fins desta refatoração, vamos focar-nos na atribuição de
-			// comportamentos.
-		}
+		flee = new Flee(6.0f);
+		evade = new Evade(3.0f);
 
 		seek = new Seek(1.0f);
 		wander = new Wander(1.0f);
-		predator.addBehaviour(seek);
-		predator.addBehaviour(wander);
-
+		pursuit = new Pursuit(1.0f);
 	}
 
 	@Override
@@ -102,30 +93,53 @@ public class Flocking extends PApplet {
 
 		background(200);
 
-		predator.getEye().look();
-		predator.clearBehaviour();
-		predator.getEye().display(this, plt);
+		float closestDist = Float.MAX_VALUE;
+		if (predator.getEye().getNearSight().size() > 0) {
+			for (int i = predator.getEye().getNearSight().size() - 1; i >= 0; i--) {
+				Boid prey = (Boid) predator.getEye().getNearSight().get(i);
+				PVector distance = prey.getToroidalDistanceVector(predator.getPosition());
 
-		if (predator.getEye().getFarSight().size() > 0) {
-			predator.getEye().setTarget(predator.getEye().getFarSight().get(0));
-			predator.addBehaviour(seek);
-			
+				if (distance.mag() < closestDist) {
+					closestDist = distance.mag();
+					predator.getEye().setTarget(prey);
+				}
+			}
+			predator.applyBehaviour(seek, dt);
+
+		} else if (predator.getEye().getFarSight().size() > 0) {
+			for (int i = predator.getEye().getFarSight().size() - 1; i >= 0; i--) {
+				Boid prey = (Boid) predator.getEye().getFarSight().get(i);
+				PVector distance = prey.getToroidalDistanceVector(predator.getPosition());
+
+				if (distance.mag() < closestDist) {
+					closestDist = distance.mag();
+					predator.getEye().setTarget(prey);
+				}
+			}
+			predator.applyBehaviour(pursuit, dt);
+
 		} else {
-			predator.addBehaviour(wander);
+			predator.applyBehaviour(wander, dt);
 		}
-		
+
 		for (int i = preyFlock.size() - 1; i >= 0; i--) {
 			Boid prey = (Boid) preyFlock.get(i);
 
-			prey.getEye().look();
-
-			prey.clearBehaviour();
-			if (prey.getEye().getTarget() == predator) {
-				prey.addBehaviour(evade);
+			if (prey.getEye().getNearSight().contains(predator)) {
+				if (!preyBehaviours.contains(flee))
+					preyBehaviours.add(flee);
+				prey.applyBehaviours(preyBehaviours, dt);
+			} else if (prey.getEye().getFarSight().contains(predator)) {
+				if (!preyBehaviours.contains(evade))
+					preyBehaviours.add(evade);
+				prey.applyBehaviours(preyBehaviours, dt);
+			} else {
+				if (preyBehaviours.contains(evade))
+					preyBehaviours.remove(evade);
+				if (preyBehaviours.contains(flee))
+					preyBehaviours.remove(flee);
+				prey.applyBehaviours(preyBehaviours, dt);
 			}
-			prey.addBehaviour(align);
-			prey.addBehaviour(cohesion);
-			prey.addBehaviour(separate);
 
 			PVector distance = prey.getToroidalDistanceVector(predator.getPosition());
 
@@ -138,15 +152,19 @@ public class Flocking extends PApplet {
 		}
 
 		for (Body body : allBodies) {
-			Boid boid = (Boid) body;
-			boid.applyBehaviours(dt);
-		}
-
-		for (Body body : allBodies) {
+			Boid prey = (Boid) body;
 			body.display(this, plt);
+			//prey.getEye().display(this, plt);
 		}
-		
-		System.out.println(predator.getBehaviours());
+		predator.getEye().display(this, plt);
 
+		if (predator.getEye().getTarget() != null) {
+			PVector targetPos = predator.getEye().getTarget().getPosition();
+			float[] pp = plt.getPixelCoord(targetPos.x, targetPos.y);
+			noFill();
+			stroke(255, 0, 0);
+			strokeWeight(3);
+			ellipse(pp[0], pp[1], 10, 10);
+		}
 	}
 }

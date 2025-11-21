@@ -17,25 +17,21 @@ public class Boid extends Body {
 	protected DNA dna;
 	protected Eye eye;
 
-	private List<Behaviour> behaviours;
 	protected float phiWander;
 	private double[] window;
-	private float sumWeights;
-	
-	public Boid(PVector pos, float mass, float radius, int color, PApplet p, SubPlot plt) {
-		super(pos, new PVector(), mass, radius, color);
+
+	public Boid(PVector position, float mass, float radius, int color, PApplet p, SubPlot plt) {
+		super(position, new PVector(), mass, radius, color);
 		setShape(p, plt);
 		dna = new DNA();
-		behaviours = new ArrayList<Behaviour>();
 		window = plt.getWindow();
 
 	}
 
-	public Boid(PVector pos, float mass, float radius, int color, Entity entity, PApplet p, SubPlot plt) {
-		super(pos, new PVector(), mass, radius, color);
+	public Boid(PVector position, float mass, float radius, int color, Entity entity, PApplet p, SubPlot plt) {
+		super(position, new PVector(), mass, radius, color);
 		setShape(p, plt);
 		dna = new DNA(entity);
-		behaviours = new ArrayList<Behaviour>();
 		window = plt.getWindow();
 
 	}
@@ -97,49 +93,21 @@ public class Boid extends Body {
 		return phiWander;
 	}
 
-	public float getSumWeights() {
-		return sumWeights;
-	}
-
-	private void updateSumWeights() {
-		sumWeights = 0;
-		for (Behaviour behaviour : behaviours)
-			if(behaviour != null)
-				sumWeights += behaviour.getWeight();
-	}
-
-	public void addBehaviour(Behaviour behaviour) {
-		behaviours.add(behaviour);
-		updateSumWeights();
-	}
-
-	public void removeBehaviour(Behaviour behaviour) {
-		if (behaviours.contains(behaviour))
-			behaviours.remove(behaviour);
-		updateSumWeights();
-	}
-	
-	public List<Behaviour> getBehaviours(){
-		return behaviours;
-	}
-
-	public void clearBehaviour() {
-		behaviours.clear();
-		updateSumWeights();
-	}
-
-	public void applyBehaviour(int i, float dt) {
+	public void applyBehaviour(Behaviour behaviour, float dt) {
 		if (eye != null)
 			eye.look();
-		Behaviour behaviour = behaviours.get(i);
 		PVector vd = behaviour.getDesiredVelocity(this);
 		move(dt, vd);
 	}
 
-	public void applyBehaviours(float dt) {
+	public void applyBehaviours(List<Behaviour> behaviours, float dt) {
 		if (eye != null)
 			eye.look();
 		PVector vd = new PVector();
+		float sumWeights = 0;
+		for (Behaviour behaviour : behaviours)
+			sumWeights += behaviour.getWeight();
+
 		for (Behaviour behaviour : behaviours) {
 			PVector vdd = behaviour.getDesiredVelocity(this);
 			vdd.mult(behaviour.getWeight() / sumWeights);

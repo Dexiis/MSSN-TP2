@@ -15,10 +15,9 @@ public class Evade extends Behaviour {
 	public PVector getDesiredVelocity(Boid me) {
 		Body bodyTarget = me.getEye().getTarget();
 
-		PVector d = bodyTarget.getVelocity().mult(me.getDNA().deltaTPursuit);
-		PVector target = PVector.add(bodyTarget.getPosition(), d);
+		PVector distance = bodyTarget.getVelocity().mult(me.getDNA().deltaTPursuit);
+		PVector target = PVector.add(bodyTarget.getPosition(), distance);
 
-		PVector vd = me.getToroidalDistanceVector(target);
-		return vd.mult(-1);
+		return me.getToroidalDistanceVector(target).mult(-1).setMag(me.getDNA().maxForce);
 	}
 }

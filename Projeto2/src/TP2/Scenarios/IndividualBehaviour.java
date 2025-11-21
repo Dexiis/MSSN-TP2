@@ -1,7 +1,6 @@
 package TP2.Scenarios;
 
 import TP2.Bodies.Body;
-import TP2.Bodies.Boid;
 import TP2.Bodies.Predator;
 import TP2.Bodies.Prey;
 import TP2.Bodies.Target;
@@ -52,10 +51,10 @@ public class IndividualBehaviour extends PApplet {
 		target = new Target(new PVector(), new PVector(), 0.2f, color(255, 0, 0));
 
 		List<Body> targets = new ArrayList<>();
-		targets.add(target);
 		targets.add(boidPursuer);
+		targets.add(target);
 		boid.setEye(new Eye(boid, targets));
-		
+
 		List<Body> pursuerTargets = new ArrayList<>();
 		pursuerTargets.add(boid);
 		boidPursuer.setEye(new Eye(boidPursuer, pursuerTargets));
@@ -68,8 +67,7 @@ public class IndividualBehaviour extends PApplet {
 		evade = new Evade(1f);
 		pursuit = new Pursuit(1f);
 
-		boid.addBehaviour(seek);
-		boidPursuer.addBehaviour(pursuit);
+		boid.getEye().setTarget(target);
 	}
 
 	public void draw() {
@@ -79,32 +77,45 @@ public class IndividualBehaviour extends PApplet {
 
 		background(255);
 
-		boid.getEye().display(this, plt);
-		
-		boid.applyBehaviours(dt);
-		boidPursuer.applyBehaviours(dt);
-
-		boid.display(this, plt);
-
 		if (currentBehaviour == PERSUIT_EVADE_MODE) {
-			float distance = boid.getToroidalDistanceVector(boidPursuer.getPosition()).mag();
-			float SAFE_DISTANCE = boid.getDNA().visionSafeDistance;
-			float evadeWeight;
-
-			if (distance >= SAFE_DISTANCE) {
-				evadeWeight = 0f;
+			
+			if (!boidPursuer.getEye().getNearSight().isEmpty()) {
+				boidPursuer.applyBehaviour(seek, dt);
+			} else if (!boidPursuer.getEye().getFarSight().isEmpty()) {
+				boidPursuer.applyBehaviour(pursuit, dt);
 			} else {
-				evadeWeight = 5*30 - (float) Math.pow((distance / SAFE_DISTANCE), 3);
+				boidPursuer.applyBehaviour(wander, dt);
 			}
 
-			evade.setWeight(evadeWeight);
-
-			boid.clearBehaviour();
-			boid.addBehaviour(wander);
-			boid.addBehaviour(evade);
 			boidPursuer.display(this, plt);
 			boidPursuer.getEye().display(this, plt);
+
+			if (!boid.getEye().getNearSight().isEmpty()) {
+				boid.applyBehaviour(flee, dt);
+				System.out.println("c");
+			} else if (!boid.getEye().getFarSight().isEmpty()) {
+				boid.applyBehaviour(evade, dt);
+				System.out.println("b");
+			} else {
+				boid.applyBehaviour(wander, dt);
+				System.out.println("a");
+			}
+			target.setPosition(new PVector(-100, -100));
+			target.display(this, plt);
+			System.out.println("-");
+			
 		} else {
+			if (currentBehaviour == SEEK_MODE) {
+				boid.applyBehaviour(seek, dt);
+			} else if (currentBehaviour == ARRIVE_MODE) {
+				boid.applyBehaviour(arrive, dt);
+			} else if (currentBehaviour == PATROL_MODE) {
+				boid.applyBehaviour(patrol, dt);
+			} else if (currentBehaviour == WANDER_MODE) {
+				boid.applyBehaviour(wander, dt);
+			} else if (currentBehaviour == FLEE_MODE) {
+				boid.applyBehaviour(flee, dt);
+			}
 			if (!staticDot) {
 				double[] ww = plt.getWorldCoord(mouseX, mouseY);
 				target.setPosition(new PVector((float) ww[0], (float) ww[1]));
@@ -112,34 +123,35 @@ public class IndividualBehaviour extends PApplet {
 			target.display(this, plt);
 		}
 
+		boid.display(this, plt);
+		boid.getEye().display(this, plt);
+
 		pushStyle();
 		fill(0);
 		textSize(16);
 		String behaviourName;
 		if (currentBehaviour == SEEK_MODE) {
-			behaviourName = "Seek (Perseguir)";
+			behaviourName = "Seek";
 		} else if (currentBehaviour == ARRIVE_MODE) {
-			behaviourName = "Arrive (Aproximar)";
+			behaviourName = "Arrive";
 		} else if (currentBehaviour == PATROL_MODE) {
-			behaviourName = "Patrol (Patrulha)";
+			behaviourName = "Patrol";
 		} else if (currentBehaviour == FLEE_MODE) {
-			behaviourName = "Flee (Fugir)";
+			behaviourName = "Flee";
 		} else if (currentBehaviour == PERSUIT_EVADE_MODE) {
-			behaviourName = (evade.getWeight() > 0.05f)
-					? "Evade/Wander (" + evade.getWeight() / boid.getSumWeights() * 100 + "%)"
-					: "Wander (100%)";
+			behaviourName = "Evade/Flee/Wander";
 		} else {
-			behaviourName = "Wander (Vaguear)";
+			behaviourName = "Wander";
 		}
 		text("Comportamento Atual (C): " + behaviourName, 10, 20);
-		text("Controlo: 'W' (Acelerar) | 'S' (Travar)", 10, 40);
-		text("Velocidade: " + boid.getVelocity().mag(), 10, 60);
+		text("Controlo Boid: 'W' (Acelerar) | 'S' (Travar)", 10, 40);
+		text("Controlo BoidPersuer: 'R' (Acelerar) | 'F' (Travar)", 10, 60);
 		text("Mudar Comportamento: 'C'", 10, 80);
 		popStyle();
 	}
 
 	public void keyPressed() {
-		int increment = 5;
+		int increment = 1;
 
 		if (key == 'w' || key == 'W') {
 			boid.setVelocity(increment, true);
@@ -155,27 +167,20 @@ public class IndividualBehaviour extends PApplet {
 			boidPursuer.setForce(increment, false);
 		} else if (key == 'c' || key == 'C') {
 
-			boid.clearBehaviour();
-
 			if (currentBehaviour == SEEK_MODE) {
 				currentBehaviour = ARRIVE_MODE;
-				boid.addBehaviour(arrive);
 			} else if (currentBehaviour == ARRIVE_MODE) {
 				currentBehaviour = PATROL_MODE;
-				boid.addBehaviour(patrol);
 			} else if (currentBehaviour == PATROL_MODE) {
 				currentBehaviour = WANDER_MODE;
-				boid.addBehaviour(wander);
 			} else if (currentBehaviour == WANDER_MODE) {
 				currentBehaviour = FLEE_MODE;
-				boid.addBehaviour(flee);
 			} else if (currentBehaviour == FLEE_MODE) {
 				currentBehaviour = PERSUIT_EVADE_MODE;
 				boid.getEye().setTarget(boidPursuer);
 			} else {
-				boid.getEye().setTarget(target);
 				currentBehaviour = SEEK_MODE;
-				boid.addBehaviour(seek);
+				boid.getEye().setTarget(target);
 			}
 		}
 	}

@@ -13,14 +13,14 @@ public class Separate extends Behaviour {
 
 	@Override
 	public PVector getDesiredVelocity(Boid me) {
-		PVector vd = new PVector();
-		for (Body b : me.getEye().getNearSight()) {
-			PVector r = PVector.sub(me.getPosition(), b.getPosition());
-			float d = r.mag();
-			r.div(d * d);
-			vd.add(r);
+		PVector desiredVelocity = new PVector();
+		for (Body body : me.getEye().getNearSight()) {
+			PVector direction = me.getToroidalDistanceVector(body.getPosition());
+			float dir = direction.mag();
+			direction.div(dir * dir);
+			desiredVelocity.add(direction);
 		}
-		return vd;
+		return desiredVelocity;
 	}
 
 }
