@@ -22,15 +22,15 @@ public class Flocking extends PApplet {
 	private List<Body> allBodies;
 	private List<Body> preyFlock;
 	private Predator predator;
-	private Evade evade;
 	private Flee flee;
+	private Flee evade;
 	private Align align;
 	private Cohesion cohesion;
 	private Separate separate;
 	private Seek seek;
 	private Wander wander;
-	private Pursuit pursuit;
 	private List<Behaviour> preyBehaviours = new ArrayList<Behaviour>();
+	private List<Behaviour> predatorBehaviours = new ArrayList<Behaviour>();
 
 	private double[] window = { -10f, 10f, -10f, 10f };
 	private float[] viewport = { 0f, 0f, 1f, 1f };
@@ -77,12 +77,13 @@ public class Flocking extends PApplet {
 		preyBehaviours.add(cohesion);
 		preyBehaviours.add(separate);
 
-		flee = new Flee(6.0f);
-		evade = new Evade(3.0f);
-
-		seek = new Seek(1.0f);
-		wander = new Wander(1.0f);
-		pursuit = new Pursuit(1.0f);
+		flee = new Flee(9.0f);
+		evade = new Flee(6.0f);
+		
+		seek = new Seek(0.8f);
+		wander = new Wander(0.2f);
+		predatorBehaviours.add(seek);
+		predatorBehaviours.add(wander);
 	}
 
 	@Override
@@ -116,7 +117,7 @@ public class Flocking extends PApplet {
 					predator.getEye().setTarget(prey);
 				}
 			}
-			predator.applyBehaviour(pursuit, dt);
+			predator.applyBehaviours(predatorBehaviours, dt);
 
 		} else {
 			predator.applyBehaviour(wander, dt);
@@ -128,10 +129,14 @@ public class Flocking extends PApplet {
 			if (prey.getEye().getNearSight().contains(predator)) {
 				if (!preyBehaviours.contains(flee))
 					preyBehaviours.add(flee);
+				if (preyBehaviours.contains(evade))
+					preyBehaviours.remove(evade);
 				prey.applyBehaviours(preyBehaviours, dt);
 			} else if (prey.getEye().getFarSight().contains(predator)) {
 				if (!preyBehaviours.contains(evade))
 					preyBehaviours.add(evade);
+				if (preyBehaviours.contains(flee))
+					preyBehaviours.remove(flee);
 				prey.applyBehaviours(preyBehaviours, dt);
 			} else {
 				if (preyBehaviours.contains(evade))

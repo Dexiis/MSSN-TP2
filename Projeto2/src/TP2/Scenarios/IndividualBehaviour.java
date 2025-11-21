@@ -26,8 +26,9 @@ public class IndividualBehaviour extends PApplet {
 	private Patrol patrol;
 	private Wander wander;
 	private Flee flee;
-	private Evade evade;
-	private Pursuit pursuit;
+	
+	private List<Behaviour> preyBehaviours = new ArrayList<Behaviour>();
+	private List<Behaviour> predatorBehaviours = new ArrayList<Behaviour>();
 
 	private boolean staticDot = false;
 
@@ -59,14 +60,17 @@ public class IndividualBehaviour extends PApplet {
 		pursuerTargets.add(boid);
 		boidPursuer.setEye(new Eye(boidPursuer, pursuerTargets));
 
-		seek = new Seek(1f);
+		seek = new Seek(0.8f);
 		arrive = new Arrive(1f);
 		patrol = new Patrol(1f);
-		wander = new Wander(1f);
-		flee = new Flee(1f);
-		evade = new Evade(1f);
-		pursuit = new Pursuit(1f);
-
+		wander = new Wander(0.2f);
+		flee = new Flee(0.8f);
+		
+		preyBehaviours.add(flee);
+		preyBehaviours.add(wander);
+		
+		predatorBehaviours.add(seek);
+		predatorBehaviours.add(wander);
 		boid.getEye().setTarget(target);
 	}
 
@@ -82,7 +86,7 @@ public class IndividualBehaviour extends PApplet {
 			if (!boidPursuer.getEye().getNearSight().isEmpty()) {
 				boidPursuer.applyBehaviour(seek, dt);
 			} else if (!boidPursuer.getEye().getFarSight().isEmpty()) {
-				boidPursuer.applyBehaviour(pursuit, dt);
+				boidPursuer.applyBehaviours(predatorBehaviours, dt);
 			} else {
 				boidPursuer.applyBehaviour(wander, dt);
 			}
@@ -94,7 +98,7 @@ public class IndividualBehaviour extends PApplet {
 				boid.applyBehaviour(flee, dt);
 				System.out.println("c");
 			} else if (!boid.getEye().getFarSight().isEmpty()) {
-				boid.applyBehaviour(evade, dt);
+				boid.applyBehaviours(preyBehaviours, dt);
 				System.out.println("b");
 			} else {
 				boid.applyBehaviour(wander, dt);
