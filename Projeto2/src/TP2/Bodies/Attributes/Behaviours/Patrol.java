@@ -37,16 +37,16 @@ public class Patrol extends Behaviour {
 		if (path.isEmpty())
 			return new PVector(0, 0);
 
-		PVector vd = me.getToroidalDistanceVector(path.get(currentIndex));
+		PVector desiredVelocity = me.getToroidalDistanceVector(path.get(currentIndex));
 		
-		float distance = vd.mag();
+		float distance = desiredVelocity.mag();
 		float radius = me.getDNA().radiusArrive;
 
 		if (distance < radius) {
-			vd.mult(distance / radius);
+			desiredVelocity.mult(distance / radius);
 			currentIndex = (currentIndex + 1) % path.size();
 		}
 		
-		return vd;
+		return desiredVelocity;
 	}
 }

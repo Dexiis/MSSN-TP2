@@ -21,9 +21,9 @@ public abstract class Movement {
 		acceleration.add(PVector.div(force, mass));
 	}
 
-	public void move(float time) {
-		velocity.add(acceleration.mult(time));
-		position.add(PVector.mult(velocity, time));
+	public void move(float dt) {
+		velocity.add(acceleration.mult(dt));
+		position.add(PVector.mult(velocity, dt));
 		acceleration.mult(0);
 	}
 

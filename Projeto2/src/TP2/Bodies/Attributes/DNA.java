@@ -21,7 +21,7 @@ public class DNA {
 			maxSpeed = random(3f, 5f);
 			maxForce = random(7f, 10f);
 
-			visionDistance = random(4.5f, 7.5f);
+			visionDistance = random(9f, 11f);
 			visionNearDistance = 0.25f * visionDistance;
 			visionAngle = (float) Math.PI * 0.2f;
 			visionNearAngle = (float) Math.PI * 0.6f;
@@ -38,8 +38,8 @@ public class DNA {
 			maxSpeed = random(2f, 4f);
 			maxForce = random(5f, 8f);
 
-			visionDistance = random(1.5f, 2.5f);
-			visionNearDistance = 0.75f * visionDistance;
+			visionDistance = random(3f, 5f);
+			visionNearDistance = 0.60f * visionDistance;
 			visionAngle = (float) Math.PI * 0.75f;
 			visionNearAngle = (float) Math.PI;
 

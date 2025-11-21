@@ -16,12 +16,12 @@ public class Arrive extends Behaviour {
 	@Override
 	public PVector getDesiredVelocity(Boid me) {
 		float desiredSpeed;
-		
+
 		Body bodyTarget = me.getEye().getTarget();
 		PVector direction = me.getToroidalDistanceVector(bodyTarget.getPosition());
 		float distance = direction.mag();
 		float breakingDistance = me.getDNA().radiusArrive;
-		
+
 		if (distance >= breakingDistance)
 			desiredSpeed = me.getDNA().maxSpeed;
 		else {

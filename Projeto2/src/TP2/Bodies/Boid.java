@@ -1,6 +1,5 @@
 package TP2.Bodies;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import TP2.Bodies.Attributes.*;

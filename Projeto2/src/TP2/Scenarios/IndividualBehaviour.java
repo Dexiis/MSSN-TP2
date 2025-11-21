@@ -96,17 +96,13 @@ public class IndividualBehaviour extends PApplet {
 
 			if (!boid.getEye().getNearSight().isEmpty()) {
 				boid.applyBehaviour(flee, dt);
-				System.out.println("c");
 			} else if (!boid.getEye().getFarSight().isEmpty()) {
 				boid.applyBehaviours(preyBehaviours, dt);
-				System.out.println("b");
 			} else {
 				boid.applyBehaviour(wander, dt);
-				System.out.println("a");
 			}
 			target.setPosition(new PVector(-100, -100));
 			target.display(this, plt);
-			System.out.println("-");
 			
 		} else {
 			if (currentBehaviour == SEEK_MODE) {

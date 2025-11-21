@@ -17,6 +17,7 @@ public class Cohesion extends Behaviour {
 		for (Body body : me.getEye().getFarSight())
 			target.add(body.getPosition());
 		target.div(me.getEye().getFarSight().size() + 1);
+
 		return me.getToroidalDistanceVector(target);
 	}
 
