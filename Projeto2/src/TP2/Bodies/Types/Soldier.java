@@ -1,5 +1,6 @@
-package TP2.Bodies;
+package TP2.Bodies.Types;
 
+import TP2.Bodies.*;
 import TP2.Core.SubPlot;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -21,7 +22,6 @@ public class Soldier extends Body {
 
 		this.soldierImage = p.loadImage("Resources/Stickman.png");
 		this.parachuteImage = p.loadImage("Resources/Parachute.png");
-
 	}
 
 	public void setParachuteHeight(int height) {
@@ -66,7 +66,7 @@ public class Soldier extends Body {
 		}
 
 		p.imageMode(PConstants.CENTER);
-		p.image(this.soldierImage, 0, 0, 25, 25);
+		p.image(this.soldierImage, 0, 0, 30, 30);
 
 		p.popMatrix();
 
