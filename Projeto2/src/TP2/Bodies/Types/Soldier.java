@@ -3,6 +3,7 @@ package TP2.Bodies.Types;
 import TP2.Bodies.*;
 import TP2.Core.SubPlot;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PImage;
 import processing.core.PVector;
 
@@ -47,7 +48,7 @@ public class Soldier extends Body {
 			if(!isParachuteOpen()) {
 				p.scale(1, -1);
 			} else {
-				p.imageMode(p.CENTER);
+				p.imageMode(PConstants.CENTER);
 				p.image(this.parachuteImage, 0, -20, 50, 50);
 			}
 		}

@@ -2,7 +2,6 @@ package TP2.Scenarios;
 
 import java.util.ArrayList;
 
-import TP2.Bodies.*;
 import TP2.Bodies.Types.*;
 import TP2.Core.*;
 import TP2.Fluids.*;
@@ -195,24 +194,6 @@ public class NormandyLanding extends PApplet {
 
 	public void mouseDragged() {
 		// TODO: Add trail to the wind current
-		if (isDragging) {
-			stroke(0);
-			line(pmouseX, pmouseY, mouseX, mouseY);
-		}
-	}
-
-	public void mouseReleased() {
-		if (isDragging) {
-			double[] worldStartCoords = plt.getWorldCoord(dragStart[0], dragStart[1]);
-			double[] worldEndCoords = plt.getWorldCoord(mouseX, mouseY);
-			println("Released at " + mouseX + ", " + mouseY);
-			windVector = new PVector((float) (worldEndCoords[0] - worldStartCoords[0]),
-					(float) (worldEndCoords[1] - worldStartCoords[1]));
-		}
-		isDragging = false;
-	}
-
-	public void mouseDragged() {
 		if (isDragging) {
 			stroke(0);
 			line(pmouseX, pmouseY, mouseX, mouseY);
