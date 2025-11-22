@@ -43,7 +43,7 @@ public class SpaceWar extends PApplet {
 	private float[] viewport = { 0f, 0f, 1f, 1f };
 	private int zoomFactor = 3;
 	private float maxViewDistance = DISTANCES[zoomFactor];
-	private float currentZoomFactor = ZOOM_FACTOR[zoomFactor];
+	private float currentZoomFactor = 1;
 	private double[] window = { -1.2 * maxViewDistance, 1.2 * maxViewDistance, -1.2 * maxViewDistance,
 			1.2 * maxViewDistance };
 	private float speed = 1;
@@ -52,7 +52,7 @@ public class SpaceWar extends PApplet {
 
 	private SubPlot plt;
 	private CelestialBody sun;
-	
+
 	public static void main(String[] args) {
 		PApplet.main(SpaceWar.class.getName());
 	}
@@ -77,8 +77,6 @@ public class SpaceWar extends PApplet {
 	}
 
 	public void draw() {
-		int factor = 1;
-
 		int now = millis();
 		float dt = (now - lastUpdateTime) / 1000f;
 		lastUpdateTime = now;
@@ -152,13 +150,6 @@ public class SpaceWar extends PApplet {
 		text("Controls: [C] 1s/s, [V] 1D/s, [B] 1M/s", 10, 50);
 		text("Controls: [W] Zoom In, [S] Zoom Out,", 10, 70);
 
-		for (int i = ZOOM_FACTOR.length - 1; i >= 1; i--) {
-			if (currentZoomFactor > ZOOM_FACTOR[i]) {
-				factor = i;
-				break;
-			}
-		}
-
 		setWindow(-1.2 * EARTH_DISTANCE * currentZoomFactor, 1.2 * EARTH_DISTANCE * currentZoomFactor,
 				-1.2 * EARTH_DISTANCE * currentZoomFactor, 1.2 * EARTH_DISTANCE * currentZoomFactor);
 	}
@@ -166,37 +157,50 @@ public class SpaceWar extends PApplet {
 	private void initializeSolarSystem() {
 
 		sun = new CelestialBody(NAMES[0], new PVector(0, -DISTANCES[0]), new PVector(SPEEDS[0], 0), MASSES[0],
-				RADII[0] * SUN_RADIUS_SCALE, color(255, 180, 0), "Resources/" + NAMES[0] + ".png", this);
+				RADII[0] * SUN_RADIUS_SCALE, 10000, color(255, 180, 0), "Resources/" + NAMES[0] + ".png", this);
 
-		addCelestialBody(NAMES[1], DISTANCES[1], SPEEDS[1], MASSES[1], RADII[1], color(150, 150, 150),
+		addPlanet(NAMES[1], DISTANCES[1], SPEEDS[1], MASSES[1], RADII[1], color(150, 150, 150),
 				"Resources/" + NAMES[1] + ".png");
 
-		addCelestialBody(NAMES[2], DISTANCES[2], SPEEDS[2], MASSES[2], RADII[2], color(220, 150, 50),
+		addPlanet(NAMES[2], DISTANCES[2], SPEEDS[2], MASSES[2], RADII[2], color(220, 150, 50),
 				"Resources/" + NAMES[2] + ".png");
 
-		addCelestialBody(NAMES[3], DISTANCES[3], SPEEDS[3], MASSES[3], RADII[3], color(0, 180, 120),
+		addPlanet(NAMES[3], DISTANCES[3], SPEEDS[3], MASSES[3], RADII[3], color(0, 180, 120),
 				"Resources/" + NAMES[3] + ".png");
 
-		addCelestialBody(NAMES[4], DISTANCES[4], SPEEDS[4], MASSES[4], RADII[4], color(200, 50, 0),
+		addPlanet(NAMES[4], DISTANCES[4], SPEEDS[4], MASSES[4], RADII[4], color(200, 50, 0),
 				"Resources/" + NAMES[4] + ".png");
-
-		addAsteroidBelt();
 
 		createStars();
 
 	}
-	
-	private void initializeBoids() {}
-	
-	private void attackingBoidsBehaviour() {}
-	
-	private void defendingBoidsBehaviour() {}
 
-	private void neutralBoidsBehaviour() {}
-	
-	private void display(List<Body> bodies) {}
-	
-	private void addCelestialBody(String name, float distance, float speed, float mass, float radius, int planetColor,
+	private void initializeBoids() {
+	}
+
+	private void attackingBoidsBehaviour() {
+	}
+
+	private void defendingBoidsBehaviour() {
+	}
+
+	private void neutralBoidsBehaviour() {
+	}
+
+	private void display(List<Body> bodies, float dt) {
+		for (Body body : bodies) {
+			body.setAcceleration(new PVector(0, 0));
+			PVector force = sun.attraction(body);
+			body.applyForce(force);
+		}
+
+		for (Body body : bodies) {
+			body.move(speed * dt);
+			body.display(this, plt);
+		}
+	}
+
+	private void addPlanet(String name, float distance, float speed, float mass, float radius, int planetColor,
 			String image) {
 
 		PVector position = new PVector(0, -distance);
@@ -205,33 +209,8 @@ public class SpaceWar extends PApplet {
 		PVector velocity = PVector.mult(perpendicularVector, speed);
 
 		CelestialBody celestialBody = new CelestialBody(name, position, velocity, mass,
-				(float) (radius * PLANET_RADIUS_SCALE), planetColor, image, this);
+				(float) (radius * PLANET_RADIUS_SCALE), 1000, planetColor, image, this);
 		celestalBodies.add(celestialBody);
-	}
-
-	private void addAsteroidBelt() {
-		for (int i = 0; i < 300; i++) {
-			float newDistance = randomizeValue(DISTANCES[5]);
-			float newSpeed = randomizeValue(SPEEDS[5]);
-			float newRadius = randomizeValue(RADII[5]);
-			float newMass = randomizeValue(MASSES[5]);
-
-			float angle = random(TWO_PI);
-			PVector position = new PVector(newDistance * cos(angle), newDistance * sin(angle));
-
-			PVector perpendicularVector = new PVector(position.y, -position.x);
-			perpendicularVector.normalize();
-			PVector velocity = PVector.mult(perpendicularVector, newSpeed);
-
-			CelestialBody celestialBody = new CelestialBody(NAMES[5] + " " + (i + 1), position, velocity, newMass,
-					(float) (newRadius * PLANET_RADIUS_SCALE), color(100, 100, 100), null, this);
-			celestalBodies.add(celestialBody);
-		}
-	}
-
-	private float randomizeValue(float baseValue) {
-		float deviation = (-0.02f) + (0.1f * random(1));
-		return baseValue * (1.0f + deviation);
 	}
 
 	private void createStars() {
@@ -257,7 +236,7 @@ public class SpaceWar extends PApplet {
 		PVector velocity = PVector.mult(direction, LAUNCH_SPEED);
 
 		CelestialBody newAsteroid = new CelestialBody("", startPosition, velocity, MASSES[5] * 2,
-				(float) (RADII[5] * 2 * PLANET_RADIUS_SCALE), color(100, 100, 100), null, this);
+				(float) (RADII[5] * 2 * PLANET_RADIUS_SCALE), 50, color(100, 100, 100), null, this);
 
 		asteroids.add(newAsteroid);
 	}

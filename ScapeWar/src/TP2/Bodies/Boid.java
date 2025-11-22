@@ -23,7 +23,6 @@ public class Boid extends Body {
 		super(position, new PVector(), color);
 		dna = new DNA(this);
 		this.mass = dna.getMass();
-		this.radius = dna.getRadius();
 		setShape(p, plt);
 		window = plt.getWindow();
 
@@ -37,14 +36,13 @@ public class Boid extends Body {
 		this.shape = shape;
 	}
 
-	public void setShape(PApplet p, SubPlot plt, float radius, int color) {
-		this.radius = radius;
+	public void setShape(PApplet p, SubPlot plt, int color) {
 		this.color = color;
 		setShape(p, plt);
 	}
 
 	public void setShape(PApplet p, SubPlot plt) {
-		float[] rr = plt.getVectorCoord(radius, radius);
+		float[] rr = plt.getVectorCoord(dna.getRadius(), dna.getRadius());
 		shape = p.createShape();
 		shape.beginShape();
 		shape.noStroke();

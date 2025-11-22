@@ -10,6 +10,7 @@ public class Particle extends Body {
 
 	private float lifespan;
 	private float timer;
+	protected float radius;
 
 	public Particle(PVector pos, PVector vel, float radius, int color, float lifespan) {
 		super(pos, vel, 0f, radius, color);
