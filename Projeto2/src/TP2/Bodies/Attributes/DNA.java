@@ -1,23 +1,24 @@
 package TP2.Bodies.Attributes;
 
-import TP2.Bodies.Entity;
+import TP2.Bodies.*;
+import TP2.Bodies.Types.*;
 
 public class DNA {
 
-	public float maxSpeed;
-	public float maxForce;
-	public float visionDistance;
-	public float visionNearDistance;
-	public float visionAngle;
-	public float deltaTPursuit;
-	public float radiusArrive;
-	public float deltaTWander;
-	public float radiusWander;
-	public float deltaPhiWander;
-	public float visionNearAngle;
+	protected float maxSpeed;
+	protected float maxForce;
+	protected float visionDistance;
+	protected float visionNearDistance;
+	protected float visionAngle;
+	protected float deltaTPursuit;
+	protected float radiusArrive;
+	protected float deltaTWander;
+	protected float radiusWander;
+	protected float deltaPhiWander;
+	protected float visionNearAngle;
 
-	public DNA(Entity entity) {
-		if (entity == Entity.PREDATOR) {
+	public DNA(Boid boid) {
+		if (boid instanceof Predator) {
 			maxSpeed = random(3f, 5f);
 			maxForce = random(7f, 10f);
 
@@ -34,7 +35,7 @@ public class DNA {
 			radiusWander = random(3f, 5f);
 
 			deltaPhiWander = (float) Math.PI / 8;
-		} else if (entity == Entity.PREY) {
+		} else if (boid instanceof Prey) {
 			maxSpeed = random(2f, 4f);
 			maxForce = random(5f, 8f);
 
@@ -71,45 +72,92 @@ public class DNA {
 		}
 	}
 
-	public DNA() {
-		maxSpeed = random(4f, 7f);
-		maxForce = random(4f, 7f);
-
-		visionDistance = random(1.5f, 3f);
-		visionNearDistance = 0.25f * visionDistance;
-		visionAngle = (float) Math.PI * 0.5f;
-
-		deltaTPursuit = random(0.5f, 1f);
-
-		radiusArrive = random(5, 10);
-
-		deltaTWander = random(.3f, .6f);
-		radiusWander = random(1f, 3f);
-
-		deltaPhiWander = (float) Math.PI / 8;
+	public float getMaxSpeed() {
+		return maxSpeed;
 	}
 
-	public DNA(DNA dna, boolean mutate) {
-		maxSpeed = dna.maxSpeed;
-		maxForce = dna.maxForce;
-
-		visionDistance = dna.visionDistance;
-		visionNearDistance = dna.visionNearDistance;
-		visionAngle = dna.radiusArrive;
-
-		deltaTPursuit = dna.deltaTPursuit;
-
-		deltaTWander = dna.deltaTWander;
-		radiusWander = dna.radiusWander;
-		deltaPhiWander = dna.deltaPhiWander;
-
-		if (mutate)
-			mutate();
+	public void setMaxSpeed(float maxSpeed) {
+		this.maxSpeed = maxSpeed;
 	}
 
-	private void mutate() {
-		maxSpeed += random(-0.2f, 0.2f);
-		maxSpeed = Math.max(0, maxSpeed);
+	public float getMaxForce() {
+		return maxForce;
+	}
+
+	public void setMaxForce(float maxForce) {
+		this.maxForce = maxForce;
+	}
+
+	public float getVisionDistance() {
+		return visionDistance;
+	}
+
+	public void setVisionDistance(float visionDistance) {
+		this.visionDistance = visionDistance;
+	}
+
+	public float getVisionNearDistance() {
+		return visionNearDistance;
+	}
+
+	public void setVisionNearDistance(float visionNearDistance) {
+		this.visionNearDistance = visionNearDistance;
+	}
+
+	public float getVisionAngle() {
+		return visionAngle;
+	}
+
+	public void setVisionAngle(float visionAngle) {
+		this.visionAngle = visionAngle;
+	}
+
+	public float getDeltaTPursuit() {
+		return deltaTPursuit;
+	}
+
+	public void setDeltaTPursuit(float deltaTPursuit) {
+		this.deltaTPursuit = deltaTPursuit;
+	}
+
+	public float getRadiusArrive() {
+		return radiusArrive;
+	}
+
+	public void setRadiusArrive(float radiusArrive) {
+		this.radiusArrive = radiusArrive;
+	}
+
+	public float getDeltaTWander() {
+		return deltaTWander;
+	}
+
+	public void setDeltaTWander(float deltaTWander) {
+		this.deltaTWander = deltaTWander;
+	}
+
+	public float getRadiusWander() {
+		return radiusWander;
+	}
+
+	public void setRadiusWander(float radiusWander) {
+		this.radiusWander = radiusWander;
+	}
+
+	public float getDeltaPhiWander() {
+		return deltaPhiWander;
+	}
+
+	public void setDeltaPhiWander(float deltaPhiWander) {
+		this.deltaPhiWander = deltaPhiWander;
+	}
+
+	public float getVisionNearAngle() {
+		return visionNearAngle;
+	}
+
+	public void setVisionNearAngle(float visionNearAngle) {
+		this.visionNearAngle = visionNearAngle;
 	}
 
 	public static float random(float min, float max) {

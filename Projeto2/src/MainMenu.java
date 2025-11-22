@@ -8,10 +8,9 @@ public class MainMenu extends PApplet {
 	private String option2 = "Individual Behaviours between Identities";
 	private String option3 = "Flocking";
 	private String option4 = "Normandy Landings Simulation";
-	private String option5 = "Space War Simulation";
 	
 	public void settings() {
-		size(360, 360);
+		size(360, 300);
 	}
 
 	public void setup() {
@@ -30,7 +29,6 @@ public class MainMenu extends PApplet {
 		drawButton(width / 2, 140, 300, 40, option2, 2);
 		drawButton(width / 2, 200, 300, 40, option3, 3);
 		drawButton(width / 2, 260, 300, 40, option4, 4);
-		drawButton(width / 2, 320, 300, 40, option5, 5);
 	}
 
 	void drawButton(float x, float y, float w, float h, String label, int id) {
@@ -58,8 +56,6 @@ public class MainMenu extends PApplet {
 			PApplet.main(Flocking.class);
 		} else if (checkButton(260, x, w, h)) {
 			PApplet.main(NormandyLanding.class);
-		} else if (checkButton(320, x, w, h)) {
-			PApplet.main(SpaceWar.class);
 		}
 	}
 	

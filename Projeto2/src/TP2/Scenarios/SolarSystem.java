@@ -1,7 +1,6 @@
 package TP2.Scenarios;
 
-import TP2.Bodies.CelestialBody;
-import TP2.Bodies.Particle;
+import TP2.Bodies.Types.*;
 import TP2.Core.*;
 
 import processing.core.PApplet;

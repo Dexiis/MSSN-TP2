@@ -5,7 +5,7 @@ import TP2.Core.*;
 import processing.core.PApplet;
 import processing.core.PVector;
 
-public class Body extends Movement {
+public abstract class Body extends Movement {
 
 	protected int color;
 	protected float radius;
@@ -21,13 +21,5 @@ public class Body extends Movement {
 		return radius;
 	}
 
-	public void display(PApplet p, SubPlot plt) {
-		p.pushStyle();
-		positions = plt.getPixelCoord(position.x, position.y);
-		float[] r = plt.getVectorCoord(radius, radius);
-		p.noStroke();
-		p.fill(color);
-		p.circle(positions[0], positions[1], 2 * r[0]);
-		p.popStyle();
-	}
+	public abstract void display(PApplet p, SubPlot plt);
 }

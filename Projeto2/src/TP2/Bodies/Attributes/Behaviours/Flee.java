@@ -16,6 +16,6 @@ public class Flee extends Behaviour {
 		Body bodyTarget = me.getEye().getTarget();
 		PVector bodyTargetDistance = me.getToroidalDistanceVector(bodyTarget.getPosition());
 		
-		return bodyTargetDistance.mult(-1).setMag(me.getDNA().maxSpeed);
+		return bodyTargetDistance.mult(-1).setMag(me.getDNA().getMaxSpeed());
 	}
 }

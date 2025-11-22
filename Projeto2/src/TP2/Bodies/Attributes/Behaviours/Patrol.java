@@ -40,7 +40,7 @@ public class Patrol extends Behaviour {
 		PVector desiredVelocity = me.getToroidalDistanceVector(path.get(currentIndex));
 		
 		float distance = desiredVelocity.mag();
-		float radius = me.getDNA().radiusArrive;
+		float radius = me.getDNA().getRadiusArrive();
 
 		if (distance < radius) {
 			desiredVelocity.mult(distance / radius);

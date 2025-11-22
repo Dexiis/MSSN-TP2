@@ -19,46 +19,20 @@ public class Boid extends Body {
 	protected float phiWander;
 	private double[] window;
 
-	public Boid(PVector position, float mass, float radius, int color, PApplet p, SubPlot plt) {
+	protected Boid(PVector position, float mass, float radius, int color, PApplet p, SubPlot plt) {
 		super(position, new PVector(), mass, radius, color);
 		setShape(p, plt);
-		dna = new DNA();
+		dna = new DNA(this);
 		window = plt.getWindow();
 
 	}
 
-	public Boid(PVector position, float mass, float radius, int color, Entity entity, PApplet p, SubPlot plt) {
-		super(position, new PVector(), mass, radius, color);
-		setShape(p, plt);
-		dna = new DNA(entity);
-		window = plt.getWindow();
-
+	public PShape getShape() {
+		return shape;
 	}
 
-	public void setEye(Eye eye) {
-		this.eye = eye;
-	}
-
-	public Eye getEye() {
-		return this.eye;
-	}
-
-	public void setVelocity(int increment, boolean aux) {
-		if (aux)
-			dna.maxSpeed += increment;
-		else {
-			dna.maxSpeed -= increment;
-			dna.maxSpeed = Math.max(0, dna.maxSpeed);
-		}
-	}
-
-	public void setForce(int increment, boolean aux) {
-		if (aux)
-			dna.maxForce += increment;
-		else {
-			dna.maxForce -= increment;
-			dna.maxForce = Math.max(0, dna.maxForce);
-		}
+	public void setShape(PShape shape) {
+		this.shape = shape;
 	}
 
 	public void setShape(PApplet p, SubPlot plt, float radius, int color) {
@@ -80,16 +54,42 @@ public class Boid extends Body {
 		shape.endShape(PConstants.CLOSE);
 	}
 
+	public void setEye(Eye eye) {
+		this.eye = eye;
+	}
+
+	public Eye getEye() {
+		return this.eye;
+	}
+
 	public void setPhiWander(float newPhiWander) {
 		this.phiWander = newPhiWander;
+	}
+
+	public float getPhiWander() {
+		return phiWander;
 	}
 
 	public DNA getDNA() {
 		return dna;
 	}
 
-	public float getPhiWander() {
-		return phiWander;
+	public void modifyVelocity(int increment, boolean aux) {
+		if (aux)
+			dna.setMaxSpeed(dna.getMaxSpeed() + increment);
+		else {
+			dna.setMaxSpeed(dna.getMaxSpeed() - increment);
+			dna.setMaxSpeed(Math.max(0, dna.getMaxSpeed()));
+		}
+	}
+
+	public void modifyForce(int increment, boolean aux) {
+		if (aux)
+			dna.setMaxForce(dna.getMaxForce() + increment);
+		else {
+			dna.setMaxForce(dna.getMaxForce() - increment);
+			dna.setMaxForce(Math.max(0, dna.getMaxForce()));
+		}
 	}
 
 	public void applyBehaviour(Behaviour behaviour, float dt) {
@@ -114,11 +114,11 @@ public class Boid extends Body {
 		}
 		move(dt, vd);
 	}
-	
+
 	public void move(float dt, PVector vd) {
-		vd.normalize().mult(dna.maxSpeed);
+		vd.normalize().mult(dna.getMaxSpeed());
 		PVector fs = PVector.sub(vd, velocity);
-		applyForce(fs.limit(dna.maxForce));
+		applyForce(fs.limit(dna.getMaxForce()));
 		super.move(dt);
 
 		if (position.x < window[0])

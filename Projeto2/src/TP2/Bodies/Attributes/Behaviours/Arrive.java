@@ -20,10 +20,10 @@ public class Arrive extends Behaviour {
 		Body bodyTarget = me.getEye().getTarget();
 		PVector direction = me.getToroidalDistanceVector(bodyTarget.getPosition());
 		float distance = direction.mag();
-		float breakingDistance = me.getDNA().radiusArrive;
+		float breakingDistance = me.getDNA().getRadiusArrive();
 
 		if (distance >= breakingDistance)
-			desiredSpeed = me.getDNA().maxSpeed;
+			desiredSpeed = me.getDNA().getMaxSpeed();
 		else {
 			float speedRatio = (float) Math.pow(distance / breakingDistance, breakPotency);
 			desiredSpeed = me.getVelocity().mag() * speedRatio;

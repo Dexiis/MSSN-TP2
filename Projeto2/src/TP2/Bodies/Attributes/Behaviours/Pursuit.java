@@ -14,7 +14,7 @@ public class Pursuit extends Behaviour {
 	@Override
 	public PVector getDesiredVelocity(Boid me) {
 		Body bodyTarget = me.getEye().getTarget();
-	    PVector d = bodyTarget.getVelocity().mult(me.getDNA().deltaTPursuit);
+	    PVector d = bodyTarget.getVelocity().mult(me.getDNA().getDeltaTPursuit());
 	    PVector target = PVector.add(bodyTarget.getPosition(), d);
 	    
 	    return me.getToroidalDistanceVector(target);

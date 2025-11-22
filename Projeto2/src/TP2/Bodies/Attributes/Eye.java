@@ -21,6 +21,26 @@ public class Eye {
 		this.allTrackingBodies = allTrackingBodies;
 		this.target = allTrackingBodies.get(0);
 	}
+	
+	public void setTarget(Body target) {
+		this.target = target;
+	}
+	
+	public Body getTarget() {
+		return target;
+	}
+	
+	public void setAllTrackingBodies(List<Body> allTrackingBodies) {
+		this.allTrackingBodies = allTrackingBodies;
+	}
+	
+	public List<Body> getAllTrackingBodies() {
+		return allTrackingBodies;
+	}
+	
+	public void addTarget(Body target) {
+		this.allTrackingBodies.add(target);
+	}
 
 	public List<Body> getFarSight() {
 		return farSight;
@@ -28,26 +48,6 @@ public class Eye {
 
 	public List<Body> getNearSight() {
 		return nearSight;
-	}
-
-	public Body getTarget() {
-		return target;
-	}
-
-	public List<Body> getTargets() {
-		return allTrackingBodies;
-	}
-
-	public void setTargets(List<Body> allTrackingBodies) {
-		this.allTrackingBodies = allTrackingBodies;
-	}
-
-	public void setTarget(Body target) {
-		this.target = target;
-	}
-	
-	public void addTarget(Body target) {
-		this.allTrackingBodies.add(target);
 	}
 
 	public void look() {
@@ -60,20 +60,20 @@ public class Eye {
 				nearSight.add(body);
 		}
 	}
-
-	private boolean inSight(PVector t, float maxDistance, float maxAngle) {
-		PVector r = me.getToroidalDistanceVector(t);
-		float d = r.mag();
-		float angle = PVector.angleBetween(r, me.getVelocity());
-		return ((d > 0) && (d < maxDistance) && (angle < maxAngle));
-	}
-
+	
 	private boolean farSight(PVector t) {
 		return inSight(t, me.getDNA().visionDistance, me.getDNA().visionAngle);
 	}
 
 	private boolean nearSight(PVector t) {
 		return inSight(t, me.getDNA().visionNearDistance, me.getDNA().visionNearAngle);
+	}
+
+	private boolean inSight(PVector t, float maxDistance, float maxAngle) {
+		PVector r = me.getToroidalDistanceVector(t);
+		float d = r.mag();
+		float angle = PVector.angleBetween(r, me.getVelocity());
+		return ((d > 0) && (d < maxDistance) && (angle < maxAngle));
 	}
 
 	public void display(PApplet p, SubPlot plt) {

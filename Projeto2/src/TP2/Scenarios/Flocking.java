@@ -3,10 +3,8 @@ package TP2.Scenarios;
 import java.util.ArrayList;
 import java.util.List;
 
-import TP2.Bodies.Boid;
-import TP2.Bodies.Particle;
-import TP2.Bodies.Predator;
-import TP2.Bodies.Prey;
+import TP2.Bodies.*;
+import TP2.Bodies.Types.*;
 import TP2.Bodies.Attributes.*;
 import TP2.Bodies.Attributes.Behaviours.*;
 import TP2.Bodies.Body;
@@ -161,7 +159,7 @@ public class Flocking extends PApplet {
 			preyFlock.remove(prey);
 			allBodies.remove(prey);
 			deathAnimation(prey.getPosition());
-			predator.getEye().setTargets(preyFlock);
+			predator.getEye().setAllTrackingBodies(preyFlock);
 			if (prey == player)
 				playerIsDead = true;
 			deathSound.play();
@@ -194,13 +192,13 @@ public class Flocking extends PApplet {
 	private void playerMovement(float dt) {
 		PVector desiredVelocity = new PVector(0, 0);
 		if (wKey)
-			desiredVelocity.add(0, player.getDNA().maxSpeed);
+			desiredVelocity.add(0, player.getDNA().getMaxSpeed());
 		if (aKey)
-			desiredVelocity.add(-player.getDNA().maxSpeed, 0);
+			desiredVelocity.add(-player.getDNA().getMaxSpeed(), 0);
 		if (sKey)
-			desiredVelocity.add(0, -player.getDNA().maxSpeed);
+			desiredVelocity.add(0, -player.getDNA().getMaxSpeed());
 		if (dKey)
-			desiredVelocity.add(player.getDNA().maxSpeed, 0);
+			desiredVelocity.add(player.getDNA().getMaxSpeed(), 0);
 		player.move(dt, desiredVelocity);
 	}
 

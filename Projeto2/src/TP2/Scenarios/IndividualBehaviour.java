@@ -1,9 +1,7 @@
 package TP2.Scenarios;
 
 import TP2.Bodies.Body;
-import TP2.Bodies.Predator;
-import TP2.Bodies.Prey;
-import TP2.Bodies.Target;
+import TP2.Bodies.Types.*;
 import TP2.Bodies.Attributes.*;
 import TP2.Bodies.Attributes.Behaviours.*;
 import TP2.Core.*;
@@ -13,13 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IndividualBehaviour extends PApplet {
-	private Prey boid;
-	private Predator boidPursuer;
 	private double[] window = { -10f, 10f, -10f, 10f };
 	private float[] viewport = { 0f, 0f, 1f, 1f };
 	private SubPlot plt;
-	private Body target;
 	private float lastUpdateTime;
+	
+	private Prey boid;
+	private Predator boidPursuer;
+	private Body target;
 
 	private Seek seek;
 	private Arrive arrive;
@@ -83,26 +82,11 @@ public class IndividualBehaviour extends PApplet {
 
 		if (currentBehaviour == PERSUIT_EVADE_MODE) {
 			
-			if (!boidPursuer.getEye().getNearSight().isEmpty()) {
-				boidPursuer.applyBehaviour(seek, dt);
-			} else if (!boidPursuer.getEye().getFarSight().isEmpty()) {
-				boidPursuer.applyBehaviours(predatorBehaviours, dt);
-			} else {
-				boidPursuer.applyBehaviour(wander, dt);
-			}
-
+			boidPursuerMovement(dt);
 			boidPursuer.display(this, plt);
 			boidPursuer.getEye().display(this, plt);
 
-			if (!boid.getEye().getNearSight().isEmpty()) {
-				boid.applyBehaviour(flee, dt);
-			} else if (!boid.getEye().getFarSight().isEmpty()) {
-				boid.applyBehaviours(preyBehaviours, dt);
-			} else {
-				boid.applyBehaviour(wander, dt);
-			}
-			target.setPosition(new PVector(-100, -100));
-			target.display(this, plt);
+			boidMovement(dt);
 			
 		} else {
 			if (currentBehaviour == SEEK_MODE) {
@@ -154,17 +138,17 @@ public class IndividualBehaviour extends PApplet {
 		int increment = 1;
 
 		if (key == 'w' || key == 'W') {
-			boid.setVelocity(increment, true);
-			boid.setForce(increment, true);
+			boid.modifyVelocity(increment, true);
+			boid.modifyForce(increment, true);
 		} else if (key == 's' || key == 'S') {
-			boid.setVelocity(increment, false);
-			boid.setForce(increment, false);
+			boid.modifyVelocity(increment, false);
+			boid.modifyForce(increment, false);
 		} else if (key == 'r' || key == 'R') {
-			boidPursuer.setVelocity(increment, true);
-			boidPursuer.setForce(increment, true);
+			boidPursuer.modifyVelocity(increment, true);
+			boidPursuer.modifyForce(increment, true);
 		} else if (key == 'f' || key == 'F') {
-			boidPursuer.setVelocity(increment, false);
-			boidPursuer.setForce(increment, false);
+			boidPursuer.modifyVelocity(increment, false);
+			boidPursuer.modifyForce(increment, false);
 		} else if (key == 'c' || key == 'C') {
 
 			if (currentBehaviour == SEEK_MODE) {
@@ -178,10 +162,31 @@ public class IndividualBehaviour extends PApplet {
 			} else if (currentBehaviour == FLEE_MODE) {
 				currentBehaviour = PERSUIT_EVADE_MODE;
 				boid.getEye().setTarget(boidPursuer);
+				target.setPosition(new PVector(-100, -100));
 			} else {
 				currentBehaviour = SEEK_MODE;
 				boid.getEye().setTarget(target);
 			}
+		}
+	}
+	
+	private void boidPursuerMovement(float dt) {
+		if (!boidPursuer.getEye().getNearSight().isEmpty()) {
+			boidPursuer.applyBehaviour(seek, dt);
+		} else if (!boidPursuer.getEye().getFarSight().isEmpty()) {
+			boidPursuer.applyBehaviours(predatorBehaviours, dt);
+		} else {
+			boidPursuer.applyBehaviour(wander, dt);
+		}
+	}
+	
+	private void boidMovement(float dt) {
+		if (!boid.getEye().getNearSight().isEmpty()) {
+			boid.applyBehaviour(flee, dt);
+		} else if (!boid.getEye().getFarSight().isEmpty()) {
+			boid.applyBehaviours(preyBehaviours, dt);
+		} else {
+			boid.applyBehaviour(wander, dt);
 		}
 	}
 
