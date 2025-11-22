@@ -35,6 +35,8 @@ public class NormandyLanding extends PApplet {
 	private static PVector windVector = new PVector(0, 0);
 
 	private int gravityIncrement = 1;
+	
+	// TODO: Animations and Sound (Trails)
 
 	public void settings() {
 		size(800, 600);
@@ -48,7 +50,7 @@ public class NormandyLanding extends PApplet {
 	}
 
 	public void draw() {
-		background(255);
+		background(135, 206, 235);
 		int now = millis();
 		float dt = (now - lastUpdateTime) / 1000f;
 		lastUpdateTime = now;
@@ -61,7 +63,7 @@ public class NormandyLanding extends PApplet {
 
 		if (birds.size() < 5)
 			generateBird();
-		
+
 		// Birds Iteration
 		for (Bird bird : birds) {
 
@@ -70,7 +72,7 @@ public class NormandyLanding extends PApplet {
 
 			if (dt > 0)
 				bird.applyForce(PVector.div(windVector, 1.2f));
-			
+
 			if (bird.getPosition().x < 0) {
 				bird.getPosition().x = 0;
 				bird.setVelocity(new PVector(-bird.getVelocity().x, bird.getVelocity().y));
@@ -80,22 +82,22 @@ public class NormandyLanding extends PApplet {
 				bird.getPosition().x = width;
 				bird.setVelocity(new PVector(-bird.getVelocity().x, bird.getVelocity().y));
 			}
-			
-			if(bird.getPosition().y < 0) {
+
+			if (bird.getPosition().y < 0) {
 				bird.getPosition().y = 0;
 				bird.setVelocity(new PVector(bird.getVelocity().x, -bird.getVelocity().y));
 			}
-			
+
 			if (bird.getPosition().y > height) {
 				bird.getPosition().y = height;
 				bird.setVelocity(new PVector(bird.getVelocity().x, -bird.getVelocity().y));
 			}
 
 			bird.move(dt);
-			
+
 			bird.display(this, plt);
 		}
-		
+
 		birds.removeAll(birdsToRemove);
 		birdsToRemove.clear();
 
@@ -106,13 +108,17 @@ public class NormandyLanding extends PApplet {
 			if (soldier.isGrounded()) {
 				/* Grounded */
 
-				// SOLDIERS SWIM
-				
+				// TODO: Soldiers Swimming
+
 			} else {
 				/* Not grounded */
 
 				PVector dragForce = air.drag(soldier);
 
+				for (Bird bird : birds) {
+					// TODO: Collisions
+				}
+				
 				if (dt > 0)
 					soldier.applyForce(PVector.mult(windVector, 1f / dt));
 
@@ -153,8 +159,8 @@ public class NormandyLanding extends PApplet {
 	}
 
 	private void generateBird() {
-		Bird bird = new Bird(new PVector(0, random(200, 500)), new PVector(random(20, 40), 0), random(4, 8), 3, color(0, 0, 0),
-				this);
+		Bird bird = new Bird(new PVector(0, random(200, 500)), new PVector(random(20, 40), 0), random(4, 8), 3,
+				color(0, 0, 0), this);
 		birds.add(bird);
 	}
 
@@ -189,6 +195,7 @@ public class NormandyLanding extends PApplet {
 	}
 
 	public void mouseDragged() {
+		// TODO: Add trail to the wind current
 		if (isDragging) {
 			stroke(0);
 			line(pmouseX, pmouseY, mouseX, mouseY);
