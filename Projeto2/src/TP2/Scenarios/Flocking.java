@@ -14,15 +14,21 @@ import TP2.Core.SubPlot;
 
 import processing.core.PApplet;
 import processing.core.PVector;
+import processing.sound.*;
 
 public class Flocking extends PApplet {
 
 	private final int NB_PREY = 50;
 	private float lastUpdateTime;
 	private boolean playerIsDead = false;
+	private boolean wKey = false;
+	private boolean aKey = false;
+	private boolean sKey = false;
+	private boolean dKey = false;
 
 	private List<Body> allBodies;
 	private List<Body> preyFlock;
+
 	private Predator predator;
 	private Prey player;
 	private Flee flee;
@@ -32,6 +38,9 @@ public class Flocking extends PApplet {
 	private Separate separate;
 	private Seek seek;
 	private Wander wander;
+	
+	private SoundFile deathSound;
+
 	private List<Behaviour> preyBehaviours = new ArrayList<Behaviour>();
 	private List<Behaviour> predatorBehaviours = new ArrayList<Behaviour>();
 	private List<Particle> particles = new ArrayList<Particle>();
@@ -51,30 +60,28 @@ public class Flocking extends PApplet {
 		allBodies = new ArrayList<Body>();
 		preyFlock = new ArrayList<Body>();
 		lastUpdateTime = millis();
+		
+		deathSound = new SoundFile(this, "DeathSound.wav");
 
 		for (int i = 0; i < NB_PREY; i++) {
-			float x = random((float) window[0], (float) window[1]);
-			float y = random((float) window[2], (float) window[3]);
-
-			Prey prey = new Prey(new PVector(x, y), 1f, 0.4f, color(0, 0, 255), this, plt);
+			Prey prey = new Prey(randomPositionn(), 1f, 0.4f, color(0, 0, 255), this, plt);
 			preyFlock.add(prey);
 			allBodies.add(prey);
 		}
 
-		float x = random((float) window[0], (float) window[1]);
-		float y = random((float) window[2], (float) window[3]);
-		PVector pos = new PVector(x, y);
+		player = new Prey(randomPositionn(), 1f, 0.4f, color(0, 255, 0), this, plt);
+		preyFlock.add(player);
+		allBodies.add(player);
 
-		player = new Prey(new PVector(x, y), 1f, 0.4f, color(0, 255, 0), this, plt);
-		predator = new Predator(pos, 2f, 0.8f, color(255, 0, 0), this, plt, preyFlock);
-		predator.getEye().addTarget(player);
+		predator = new Predator(randomPositionn(), 2f, 0.8f, color(255, 0, 0), this, plt, preyFlock);
 		allBodies.add(predator);
 
 		for (Body body : preyFlock) {
 			Boid prey = (Boid) body;
+			if (prey == player)
+				continue;
 			prey.setEye(new Eye(prey, allBodies));
 			prey.getEye().setTarget(predator);
-			prey.getEye().addTarget(player);
 		}
 
 		align = new Align(1.0f);
@@ -101,6 +108,116 @@ public class Flocking extends PApplet {
 
 		background(200);
 
+		predatorMovement(dt);
+
+		for (int i = preyFlock.size() - 1; i >= 0; i--) {
+			Boid prey = (Boid) preyFlock.get(i);
+			if (prey == player) {
+				isDead(prey);
+				continue;
+			}
+			preyMovement(dt, prey);
+			isDead(prey);
+		}
+
+		if (!playerIsDead)
+			playerMovement(dt);
+
+		for (Body body : allBodies)
+			body.display(this, plt);
+
+		predator.getEye().display(this, plt);
+		if (predator.getEye().getTarget() != null) {
+			PVector targetPos = predator.getEye().getTarget().getPosition();
+			float[] pp = plt.getPixelCoord(targetPos.x, targetPos.y);
+			noFill();
+			stroke(255, 0, 0);
+			strokeWeight(3);
+			ellipse(pp[0], pp[1], 10, 10);
+		}
+
+		for (int i = particles.size() - 1; i >= 0; i--) {
+			Particle particle = particles.get(i);
+			particle.display(this, plt);
+			particle.move(dt);
+			if (particle.isDead())
+				particles.remove(particle);
+		}
+
+	}
+
+	private void isDead(Boid prey) {
+		PVector distance = prey.getToroidalDistanceVector(predator.getPosition());
+		if (distance.mag() < (prey.getRadius() + predator.getRadius()) / 2) {
+			preyFlock.remove(prey);
+			allBodies.remove(prey);
+			deathAnimation(prey.getPosition());
+			predator.getEye().setTargets(preyFlock);
+			if (prey == player)
+				playerIsDead = true;
+			deathSound.play();
+		}
+		
+	}
+	
+	private void deathAnimation(PVector position) {
+		final float PARTICLE_LIFESPAN = 5f;
+		final int NUM_PARTICLES = 20;
+
+		for (int i = 0; i < NUM_PARTICLES; i++) {
+			PVector vel = PVector.random2D();
+			vel.mult(random(0.1f, 1.5f));
+			int particleColor = color(random(200, 255), 0, 0, 200);
+			float lifespan = random(0.5f, PARTICLE_LIFESPAN);
+			float radius = 0.1f;
+
+			Particle particle = new Particle(position.copy(), vel, radius, particleColor, lifespan);
+			particles.add(particle);
+		}
+	}
+
+	private PVector randomPositionn() {
+		float x = random((float) window[0], (float) window[1]);
+		float y = random((float) window[2], (float) window[3]);
+		return new PVector(x, y);
+	}
+
+	private void playerMovement(float dt) {
+		PVector desiredVelocity = new PVector(0,0);
+		if (wKey)
+			desiredVelocity.add(0, player.getDNA().maxSpeed);
+		if (aKey)
+			desiredVelocity.add(-player.getDNA().maxSpeed, 0);
+		if (sKey)
+			desiredVelocity.add(0, -player.getDNA().maxSpeed);
+		if (dKey)
+			desiredVelocity.add(player.getDNA().maxSpeed, 0);
+		player.move(dt, desiredVelocity);
+	}
+
+	private void preyMovement(float dt, Boid prey) {
+		if (prey.getEye().getNearSight().contains(predator)) {
+			if (!preyBehaviours.contains(flee))
+				preyBehaviours.add(flee);
+			if (preyBehaviours.contains(evade))
+				preyBehaviours.remove(evade);
+			prey.applyBehaviours(preyBehaviours, dt);
+		} else if (prey.getEye().getFarSight().contains(predator)) {
+			if (!preyBehaviours.contains(evade))
+				preyBehaviours.add(evade);
+			if (preyBehaviours.contains(flee))
+				preyBehaviours.remove(flee);
+			prey.applyBehaviours(preyBehaviours, dt);
+		} else {
+			if (preyBehaviours.contains(evade))
+				preyBehaviours.remove(evade);
+			if (preyBehaviours.contains(flee))
+				preyBehaviours.remove(flee);
+			prey.applyBehaviours(preyBehaviours, dt);
+		}
+	}
+
+	private void predatorMovement(float dt) {
 		float closestDist = Float.MAX_VALUE;
 		if (predator.getEye().getNearSight().size() > 0) {
 			for (int i = predator.getEye().getNearSight().size() - 1; i >= 0; i--) {
@@ -128,83 +245,39 @@ public class Flocking extends PApplet {
 
 		} else {
 			predator.applyBehaviour(wander, dt);
-		}
-
-		for (int i = preyFlock.size() - 1; i >= 0; i--) {
-			Boid prey = (Boid) preyFlock.get(i);
-
-			if (prey.getEye().getNearSight().contains(predator)) {
-				if (!preyBehaviours.contains(flee))
-					preyBehaviours.add(flee);
-				if (preyBehaviours.contains(evade))
-					preyBehaviours.remove(evade);
-				prey.applyBehaviours(preyBehaviours, dt);
-			} else if (prey.getEye().getFarSight().contains(predator)) {
-				if (!preyBehaviours.contains(evade))
-					preyBehaviours.add(evade);
-				if (preyBehaviours.contains(flee))
-					preyBehaviours.remove(flee);
-				prey.applyBehaviours(preyBehaviours, dt);
-			} else {
-				if (preyBehaviours.contains(evade))
-					preyBehaviours.remove(evade);
-				if (preyBehaviours.contains(flee))
-					preyBehaviours.remove(flee);
-				prey.applyBehaviours(preyBehaviours, dt);
-			}
-
-			PVector distance = prey.getToroidalDistanceVector(predator.getPosition());
-
-			if (distance.mag() < (prey.getRadius() + predator.getRadius()) / 2) {
-				preyFlock.remove(prey);
-				allBodies.remove(prey);
-				deathAnimation(prey.getPosition());
-				predator.getEye().setTargets(preyFlock);
-				if (prey == player)
-					playerIsDead = true;
-				if (!playerIsDead)
-					predator.getEye().setTarget(player);
-			}
-
-		}
-
-		for (Body body : allBodies)
-			body.display(this, plt);
-		
-		predator.getEye().display(this, plt);
-		for (int i = particles.size() - 1; i >= 0; i--) {
-			Particle particle = particles.get(i);
-			particle.display(this, plt);
-			particle.move(dt);
-			if (particle.isDead())
-				particles.remove(particle);
-		}
-		
-		if (!playerIsDead) player.display(this, plt);
-
-		if (predator.getEye().getTarget() != null) {
-			PVector targetPos = predator.getEye().getTarget().getPosition();
-			float[] pp = plt.getPixelCoord(targetPos.x, targetPos.y);
-			noFill();
-			stroke(255, 0, 0);
-			strokeWeight(3);
-			ellipse(pp[0], pp[1], 10, 10);
+			
 		}
 	}
 
-	private void deathAnimation(PVector position) {
-		final float PARTICLE_LIFESPAN = 5f;
-		final int NUM_PARTICLES = 20;
+	public void keyPressed() {
 
-		for (int i = 0; i < NUM_PARTICLES; i++) {
-			PVector vel = PVector.random2D();
-			vel.mult(random(0.1f, 1.5f));
-			int particleColor = color(random(200, 255), 0, 0, 200);
-			float lifespan = random(0.5f, PARTICLE_LIFESPAN);
-			float radius = 0.1f;
-
-			Particle particle = new Particle(position.copy(), vel, radius, particleColor, lifespan);
-			particles.add(particle);
+		if (key == 'w' || key == 'W') {
+			wKey = true;
+		}
+		if (key == 'a' || key == 'A') {
+			aKey = true;
+		}
+		if (key == 's' || key == 'S') {
+			sKey = true;
+		}
+		if (key == 'd' || key == 'D') {
+			dKey = true;
 		}
 	}
+
+	public void keyReleased() {
+		if (key == 'w' || key == 'W') {
+			wKey = false;
+		}
+		if (key == 'a' || key == 'A') {
+			aKey = false;
+		}
+		if (key == 's' || key == 'S') {
+			sKey = false;
+		}
+		if (key == 'd' || key == 'D') {
+			dKey = false;
+		}
+	}
+
 }

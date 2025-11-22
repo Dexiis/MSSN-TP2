@@ -165,19 +165,19 @@ public class SolarSystem extends PApplet {
 	private void initializeSolarSystem() {
 
 		sun = new CelestialBody(NAMES[0], new PVector(0, -DISTANCES[0]), new PVector(SPEEDS[0], 0), MASSES[0],
-				RADII[0] * SUN_RADIUS_SCALE, color(255, 180, 0), "Images/" + NAMES[0] + ".png", this);
+				RADII[0] * SUN_RADIUS_SCALE, color(255, 180, 0), "Resources/" + NAMES[0] + ".png", this);
 
 		addCelestialBody(NAMES[1], DISTANCES[1], SPEEDS[1], MASSES[1], RADII[1], color(150, 150, 150),
-				"Images/" + NAMES[1] + ".png");
+				"Resources/" + NAMES[1] + ".png");
 
 		addCelestialBody(NAMES[2], DISTANCES[2], SPEEDS[2], MASSES[2], RADII[2], color(220, 150, 50),
-				"Images/" + NAMES[2] + ".png");
+				"Resources/" + NAMES[2] + ".png");
 
 		addCelestialBody(NAMES[3], DISTANCES[3], SPEEDS[3], MASSES[3], RADII[3], color(0, 180, 120),
-				"Images/" + NAMES[3] + ".png");
+				"Resources/" + NAMES[3] + ".png");
 
 		addCelestialBody(NAMES[4], DISTANCES[4], SPEEDS[4], MASSES[4], RADII[4], color(200, 50, 0),
-				"Images/" + NAMES[4] + ".png");
+				"Resources/" + NAMES[4] + ".png");
 
 		addAsteroidBelt();
 
