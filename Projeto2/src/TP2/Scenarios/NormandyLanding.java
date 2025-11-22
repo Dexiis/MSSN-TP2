@@ -34,6 +34,8 @@ public class NormandyLanding extends PApplet {
 	private static PVector windVector = new PVector(0, 0);
 
 	private int gravityIncrement = 1;
+	
+	// TODO: Animations and Sound (Trails)
 
 	public void settings() {
 		size(800, 600);
@@ -47,7 +49,7 @@ public class NormandyLanding extends PApplet {
 	}
 
 	public void draw() {
-		background(255);
+		background(135, 206, 235);
 		int now = millis();
 		float dt = (now - lastUpdateTime) / 1000f;
 		lastUpdateTime = now;
@@ -105,13 +107,17 @@ public class NormandyLanding extends PApplet {
 			if (soldier.isGrounded()) {
 				/* Grounded */
 
-				// SOLDIERS SWIM
+				// TODO: Soldiers Swimming
 
 			} else {
 				/* Not grounded */
 
 				PVector dragForce = air.drag(soldier);
 
+				for (Bird bird : birds) {
+					// TODO: Collisions
+				}
+				
 				if (dt > 0)
 					soldier.applyForce(PVector.mult(windVector, 1f / dt));
 
@@ -174,6 +180,25 @@ public class NormandyLanding extends PApplet {
 		dragStart[1] = mouseY;
 		isDragging = true;
 		println(plt.getWorldCoord(mouseX, mouseY));
+	}
+
+	public void mouseReleased() {
+		if (isDragging) {
+			double[] worldStartCoords = plt.getWorldCoord(dragStart[0], dragStart[1]);
+			double[] worldEndCoords = plt.getWorldCoord(mouseX, mouseY);
+			println("Released at " + mouseX + ", " + mouseY);
+			windVector = new PVector((float) (worldEndCoords[0] - worldStartCoords[0]),
+					(float) (worldEndCoords[1] - worldStartCoords[1]));
+		}
+		isDragging = false;
+	}
+
+	public void mouseDragged() {
+		// TODO: Add trail to the wind current
+		if (isDragging) {
+			stroke(0);
+			line(pmouseX, pmouseY, mouseX, mouseY);
+		}
 	}
 
 	public void mouseReleased() {
