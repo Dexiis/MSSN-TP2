@@ -30,7 +30,7 @@ public class Flocking extends PApplet {
 	private List<Body> preyFlock;
 
 	private Predator predator;
-	private Prey player;
+	private Prey player, monitoredPrey;
 	private Flee flee;
 	private Flee evade;
 	private Align align;
@@ -38,7 +38,7 @@ public class Flocking extends PApplet {
 	private Separate separate;
 	private Seek seek;
 	private Wander wander;
-	
+
 	private SoundFile deathSound;
 
 	private List<Behaviour> preyBehaviours = new ArrayList<Behaviour>();
@@ -60,13 +60,19 @@ public class Flocking extends PApplet {
 		allBodies = new ArrayList<Body>();
 		preyFlock = new ArrayList<Body>();
 		lastUpdateTime = millis();
-		
+
 		deathSound = new SoundFile(this, "DeathSound.wav");
 
 		for (int i = 0; i < NB_PREY; i++) {
-			Prey prey = new Prey(randomPositionn(), 1f, 0.4f, color(0, 0, 255), this, plt);
-			preyFlock.add(prey);
-			allBodies.add(prey);
+			if (i == 0) {
+				monitoredPrey = new Prey(randomPositionn(), 1f, 0.4f, color(0, 123, 122), this, plt);
+				preyFlock.add(monitoredPrey);
+				allBodies.add(monitoredPrey);
+			} else {
+				Prey prey = new Prey(randomPositionn(), 1f, 0.4f, color(0, 0, 255), this, plt);
+				preyFlock.add(prey);
+				allBodies.add(prey);
+			}
 		}
 
 		player = new Prey(randomPositionn(), 1f, 0.4f, color(0, 255, 0), this, plt);
@@ -125,6 +131,9 @@ public class Flocking extends PApplet {
 
 		for (Body body : allBodies)
 			body.display(this, plt);
+		
+		monitoredPrey.getEye().display(this, plt);
+		monitoredPrey.displayVelocityVector(this, plt);
 
 		predator.getEye().display(this, plt);
 		if (predator.getEye().getTarget() != null) {
@@ -157,9 +166,9 @@ public class Flocking extends PApplet {
 				playerIsDead = true;
 			deathSound.play();
 		}
-		
+
 	}
-	
+
 	private void deathAnimation(PVector position) {
 		final float PARTICLE_LIFESPAN = 5f;
 		final int NUM_PARTICLES = 20;
@@ -183,7 +192,7 @@ public class Flocking extends PApplet {
 	}
 
 	private void playerMovement(float dt) {
-		PVector desiredVelocity = new PVector(0,0);
+		PVector desiredVelocity = new PVector(0, 0);
 		if (wKey)
 			desiredVelocity.add(0, player.getDNA().maxSpeed);
 		if (aKey)
@@ -245,7 +254,7 @@ public class Flocking extends PApplet {
 
 		} else {
 			predator.applyBehaviour(wander, dt);
-			
+
 		}
 	}
 
