@@ -8,49 +8,60 @@ public class DNA {
 	protected float maxSpeed;
 	protected float maxForce;
 	protected float visionDistance;
-	protected float visionNearDistance;
 	protected float visionAngle;
+	protected float visionNearDistance;
+	protected float visionNearAngle;
+	protected float visionShottingDistance;
+	protected float visionShottingAngle;
 	protected float deltaTPursuit;
-	protected float radiusArrive;
 	protected float deltaTWander;
 	protected float radiusWander;
 	protected float deltaPhiWander;
-	protected float visionNearAngle;
 	protected float radius;
 	protected float mass;
 
 	public DNA(Boid boid) {
 
-		if (boid instanceof Blue) {
-			maxSpeed = random(3f, 5f);
-			maxForce = random(7f, 10f);
+		if (boid instanceof Red) {
+			maxSpeed = random(4.5f, 9f);
+			maxForce = random(4.5f, 9f);
 
-			visionDistance = random(9f, 11f);
+			visionDistance = random(15f, 30f);
+			visionAngle = (float) Math.PI * 0.30f;
+
 			visionNearDistance = 0.25f * visionDistance;
-			visionAngle = (float) Math.PI * 0.2f;
-			visionNearAngle = (float) Math.PI * 0.6f;
+			visionNearAngle = (float) Math.PI * 0.4f;
+
+			visionShottingDistance = random(12f, visionDistance);
+			visionShottingAngle = (float) Math.PI * 0.2f;
+
+			radius = random(1f, 2f);
+			mass = random(1f, 2f);
 
 			deltaTPursuit = random(0.5f, 1f);
-
-			radiusArrive = random(5, 10);
 
 			deltaTWander = random(.3f, .6f);
 			radiusWander = random(3f, 5f);
 
 			deltaPhiWander = (float) Math.PI / 8;
 
-		} else if (boid instanceof Red) {
-			maxSpeed = random(2f, 4f);
-			maxForce = random(5f, 8f);
+		} else if (boid instanceof Blue) {
+			maxSpeed = random(3f, 6f);
+			maxForce = random(3f, 6f);
 
-			visionDistance = random(3f, 5f);
-			visionNearDistance = 0.60f * visionDistance;
-			visionAngle = (float) Math.PI * 0.75f;
-			visionNearAngle = (float) Math.PI;
+			visionDistance = random(10f, 20f);
+			visionAngle = (float) Math.PI * 0.5f;
+
+			visionNearDistance = 0.5f * visionDistance;
+			visionNearAngle = (float) Math.PI * 0.6f;
+
+			visionShottingDistance = random(7f, visionDistance);
+			visionShottingAngle = (float) Math.PI * 0.4f;
+
+			radius = random(2f, 4f);
+			mass = random(2f, 4f);
 
 			deltaTPursuit = random(0.5f, 1f);
-
-			radiusArrive = random(5, 10);
 
 			deltaTWander = random(.3f, .6f);
 			radiusWander = random(3f, 5f);
@@ -58,22 +69,25 @@ public class DNA {
 			deltaPhiWander = (float) Math.PI / 8;
 
 		} else if (boid instanceof Neutral) {
-			maxSpeed = random(2f, 4f);
-			maxForce = random(5f, 8f);
+			maxSpeed = random(1f, 2f);
+			maxForce = random(1f, 2f);
 
-			visionDistance = random(3f, 5f);
-			visionNearDistance = 0.60f * visionDistance;
-			visionAngle = (float) Math.PI * 0.75f;
-			visionNearAngle = (float) Math.PI;
+			visionDistance = random(20f, 40f);
+			visionAngle = (float) Math.PI * 0.2f;
+
+			visionNearDistance = 0.25f * visionDistance;
+			visionNearAngle = (float) Math.PI * 0.9f;
+
+			visionShottingDistance = random(15f, visionDistance);
+			visionShottingAngle = (float) Math.PI * 0.1f;
+
+			radius = random(6f, 10f);
+			mass = random(6f, 10f);
 
 			deltaTPursuit = random(0.5f, 1f);
 
-			radiusArrive = random(5, 10);
-
 			deltaTWander = random(.3f, .6f);
 			radiusWander = random(3f, 5f);
-
-			deltaPhiWander = (float) Math.PI / 8;
 
 		} else {
 			System.err.println("Não existe esta classe definida.");
@@ -126,14 +140,6 @@ public class DNA {
 
 	public void setDeltaTPursuit(float deltaTPursuit) {
 		this.deltaTPursuit = deltaTPursuit;
-	}
-
-	public float getRadiusArrive() {
-		return radiusArrive;
-	}
-
-	public void setRadiusArrive(float radiusArrive) {
-		this.radiusArrive = radiusArrive;
 	}
 
 	public float getDeltaTWander() {

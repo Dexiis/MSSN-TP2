@@ -14,6 +14,8 @@ import java.util.List;
 
 public class SpaceWar extends PApplet {
 
+	private Blue player; // MUDAR MANUALMENTE A EQUIPE
+
 	private ArrayList<CelestialBody> celestalBodies;
 	private ArrayList<CelestialBody> asteroids;
 	private ArrayList<Particle> particles;
@@ -28,16 +30,11 @@ public class SpaceWar extends PApplet {
 	private static final float SUN_RADIUS_SCALE = 40;
 
 	static final String[] NAMES = { "Sun", "Mercury", "Venus", "Earth", "Mars", "Asteroid" };
-
 	static final float[] DISTANCES = { 0.0f, 0.387f * EARTH_DISTANCE, 0.723f * EARTH_DISTANCE, 1.00f * EARTH_DISTANCE,
 			1.524f * EARTH_DISTANCE, 2.5f * EARTH_DISTANCE };
-
 	static final float[] ZOOM_FACTOR = { 0.0f, 0.387f, 0.723f, 1.00f, 1.524f, 5f };
-
 	static final float[] SPEEDS = { 0.0f, 4.79e4f, 3.50e4f, 2.98e4f, 2.41e4f, 2.0e4f };
-
 	static final float[] RADII = { 6.96e8f, 2.44e6f, 6.05e6f, 6.37e6f, 3.39e6f, 1.0e6f };
-
 	static final float[] MASSES = { 1.989e30f, 3.30e23f, 4.87e24f, 5.97e24f, 6.42e23f, 1e12f };
 
 	private float[] viewport = { 0f, 0f, 1f, 1f };
@@ -46,6 +43,21 @@ public class SpaceWar extends PApplet {
 	private float currentZoomFactor = 1;
 	private double[] window = { -1.2 * maxViewDistance, 1.2 * maxViewDistance, -1.2 * maxViewDistance,
 			1.2 * maxViewDistance };
+
+	private Cohesion cohesion;
+	private Evade evade;
+	private Flee flee;
+	private Pursuit pursuit;
+	private Seek seek;
+	private Separate separate;
+	private Wander wander;
+
+	private boolean playerIsDead = false;
+	private boolean wKey = false;
+	private boolean aKey = false;
+	private boolean sKey = false;
+	private boolean dKey = false;
+
 	private float speed = 1;
 	private float lastUpdateTime;
 	private float particleCreationTimer = 0;
@@ -69,6 +81,14 @@ public class SpaceWar extends PApplet {
 		particles = new ArrayList<>();
 		stars = new ArrayList<>();
 		initializeSolarSystem();
+
+		Cohesion cohesion = new Cohesion(1f);
+		Evade evade = new Evade(1f);
+		Flee flee = new Flee(1f);
+		Pursuit pursuit = new Pursuit(1f);
+		Seek seek = new Seek(1f);
+		Separate separate = new Separate(1f);
+		Wander wander = new Wander(1f);
 
 		background(0);
 		textSize(16);
@@ -154,6 +174,12 @@ public class SpaceWar extends PApplet {
 				-1.2 * EARTH_DISTANCE * currentZoomFactor, 1.2 * EARTH_DISTANCE * currentZoomFactor);
 	}
 
+	private void createBluePlayer() {
+	} // TODO
+
+	private void createRedPlayer() {
+	} // TODO
+
 	private void initializeSolarSystem() {
 
 		sun = new CelestialBody(NAMES[0], new PVector(0, -DISTANCES[0]), new PVector(SPEEDS[0], 0), MASSES[0],
@@ -176,18 +202,130 @@ public class SpaceWar extends PApplet {
 	}
 
 	private void initializeBoids() {
+	} // TODO
+
+	private PVector randomPositionn() {
+		float x = random((float) window[0], (float) window[1]);
+		float y = random((float) window[2], (float) window[3]);
+		return new PVector(x, y);
 	}
 
-	private void attackingBoidsBehaviour() {
+	private void playerMovement(float dt) {
+		PVector desiredVelocity = new PVector(0, 0);
+		if (wKey)
+			desiredVelocity.add(0, player.getDNA().getMaxSpeed());
+		if (aKey)
+			desiredVelocity.add(-player.getDNA().getMaxSpeed(), 0);
+		if (sKey)
+			desiredVelocity.add(0, -player.getDNA().getMaxSpeed());
+		if (dKey)
+			desiredVelocity.add(player.getDNA().getMaxSpeed(), 0);
+		player.move(dt, desiredVelocity);
 	}
 
-	private void defendingBoidsBehaviour() {
+	private void attackingBoidsBehaviour(float dt) { //TODO fazer os behaviours
+		for (Red red : redTeam) {
+			float closestDist = Float.MAX_VALUE;
+			if (red.getEye().getNearSight().size() > 0) {
+				for (int i = red.getEye().getNearSight().size() - 1; i >= 0; i--) {
+					Boid prey = (Boid) red.getEye().getNearSight().get(i);
+					PVector distance = prey.getToroidalDistanceVector(red.getPosition());
+
+					if (distance.mag() < closestDist) {
+						closestDist = distance.mag();
+						red.getEye().setTarget(prey);
+					}
+				}
+				red.applyBehaviour(seek, dt);
+
+			} else if (red.getEye().getFarSight().size() > 0) {
+				for (int i = red.getEye().getFarSight().size() - 1; i >= 0; i--) {
+					Boid prey = (Boid) red.getEye().getFarSight().get(i);
+					PVector distance = prey.getToroidalDistanceVector(red.getPosition());
+
+					if (distance.mag() < closestDist) {
+						closestDist = distance.mag();
+						red.getEye().setTarget(prey);
+					}
+				}
+				red.applyBehaviour(seek, dt);
+
+			} else {
+				red.applyBehaviour(wander, dt);
+
+			}
+		}
 	}
 
-	private void neutralBoidsBehaviour() {
+	private void defendingBoidsBehaviour(float dt) { //TODO fazer os behaviours
+		for (Blue blue : blueTeam) {
+			float closestDist = Float.MAX_VALUE;
+			if (blue.getEye().getNearSight().size() > 0) {
+				for (int i = blue.getEye().getNearSight().size() - 1; i >= 0; i--) {
+					Boid prey = (Boid) blue.getEye().getNearSight().get(i);
+					PVector distance = prey.getToroidalDistanceVector(blue.getPosition());
+
+					if (distance.mag() < closestDist) {
+						closestDist = distance.mag();
+						blue.getEye().setTarget(prey);
+					}
+				}
+				blue.applyBehaviour(seek, dt);
+
+			} else if (blue.getEye().getFarSight().size() > 0) {
+				for (int i = blue.getEye().getFarSight().size() - 1; i >= 0; i--) {
+					Boid prey = (Boid) blue.getEye().getFarSight().get(i);
+					PVector distance = prey.getToroidalDistanceVector(blue.getPosition());
+
+					if (distance.mag() < closestDist) {
+						closestDist = distance.mag();
+						blue.getEye().setTarget(prey);
+					}
+				}
+				blue.applyBehaviour(seek, dt);
+
+			} else {
+				blue.applyBehaviour(wander, dt);
+
+			}
+		}
 	}
 
-	private void display(List<Body> bodies, float dt) {
+	private void neutralBoidsBehaviour(float dt) { //TODO fazer os behaviours
+		for (Neutral neutral : neutralTeam) {
+			float closestDist = Float.MAX_VALUE;
+			if (neutral.getEye().getNearSight().size() > 0) {
+				for (int i = neutral.getEye().getNearSight().size() - 1; i >= 0; i--) {
+					Boid prey = (Boid) neutral.getEye().getNearSight().get(i);
+					PVector distance = prey.getToroidalDistanceVector(neutral.getPosition());
+
+					if (distance.mag() < closestDist) {
+						closestDist = distance.mag();
+						neutral.getEye().setTarget(prey);
+					}
+				}
+				neutral.applyBehaviour(seek, dt);
+
+			} else if (neutral.getEye().getFarSight().size() > 0) {
+				for (int i = neutral.getEye().getFarSight().size() - 1; i >= 0; i--) {
+					Boid prey = (Boid) neutral.getEye().getFarSight().get(i);
+					PVector distance = prey.getToroidalDistanceVector(neutral.getPosition());
+
+					if (distance.mag() < closestDist) {
+						closestDist = distance.mag();
+						neutral.getEye().setTarget(prey);
+					}
+				}
+				neutral.applyBehaviour(seek, dt);
+
+			} else {
+				neutral.applyBehaviour(wander, dt);
+
+			}
+		}
+	}
+
+	private void display(List<Body> bodies, float dt) { //TODO Não está completamente certo. Método sobrecarregado?
 		for (Body body : bodies) {
 			body.setAcceleration(new PVector(0, 0));
 			PVector force = sun.attraction(body);
@@ -222,7 +360,7 @@ public class SpaceWar extends PApplet {
 		}
 	}
 
-	private void summonAsteroid(int mouseX, int mouseY) {
+	private void summonAsteroid(int mouseX, int mouseY) { // TODO Mudar a lógica disto
 		double[] currentWindow = plt.getWindow();
 		float x0 = random((float) currentWindow[0], (float) currentWindow[1]);
 		float y0 = (float) currentWindow[3] * 1.05f;
@@ -276,38 +414,33 @@ public class SpaceWar extends PApplet {
 	}
 
 	public void keyPressed() {
-		float speedIncrement = 604800;
-
-		if (key == CODED)
-			if (keyCode == UP) {
-				speed += speedIncrement;
-				speed = min(speed, 2629744 * 6);
-			} else if (keyCode == DOWN) {
-				speed -= speedIncrement;
-				speed = max(speed, -2629744 * 6);
-			}
-
-		if (key == 'c' || key == 'C')
-			speed = 60;
-
-		if (key == 'v' || key == 'V')
-			speed = 86400;
-
-		if (key == 'b' || key == 'B')
-			speed = 2629744;
 
 		if (key == 'w' || key == 'W') {
-			zoomFactor--;
-			zoomFactor = max(1, zoomFactor);
+			wKey = true;
 		}
-
+		if (key == 'a' || key == 'A') {
+			aKey = true;
+		}
 		if (key == 's' || key == 'S') {
-			zoomFactor++;
-			zoomFactor = min(NAMES.length - 1, zoomFactor);
+			sKey = true;
+		}
+		if (key == 'd' || key == 'D') {
+			dKey = true;
 		}
 	}
 
-	public void mousePressed() {
-		summonAsteroid(mouseX, mouseY);
+	public void keyReleased() {
+		if (key == 'w' || key == 'W') {
+			wKey = false;
+		}
+		if (key == 'a' || key == 'A') {
+			aKey = false;
+		}
+		if (key == 's' || key == 'S') {
+			sKey = false;
+		}
+		if (key == 'd' || key == 'D') {
+			dKey = false;
+		}
 	}
 }

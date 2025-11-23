@@ -68,6 +68,10 @@ public class Eye {
 	private boolean nearSight(PVector t) {
 		return inSight(t, me.getDNA().visionNearDistance, me.getDNA().visionNearAngle);
 	}
+	
+	private boolean shottingSight(PVector t) {
+		return inSight(t, me.getDNA().visionShottingDistance, me.getDNA().visionShottingAngle);
+	}
 
 	private boolean inSight(PVector t, float maxDistance, float maxAngle) {
 		PVector r = me.getToroidalDistanceVector(t);
